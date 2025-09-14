@@ -3,6 +3,7 @@ namespace MemberDirectory\App\Src;
 use MemberDirectory\Traits\Hook;
 use MemberDirectory\App\Src\Member;
 use MemberDirectory\App\Src\Team;
+use MemberDirectory\App\Src\Assign;
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -65,6 +66,7 @@ class Admin {
     public function register_menus() {
         $member = new Member();
         $team = new Team();
+        $assign = new Assign();
         add_menu_page(
             __( 'Member Directory', 'member-directory' ),
             __( 'Member Directory', 'member-directory' ),
@@ -91,6 +93,15 @@ class Admin {
             'manage_options',
             'teams',
             [ $team, 'teams_page' ]
+        );
+
+        add_submenu_page(
+            'members',
+            __( 'Assign', 'member-directory' ),
+            __( 'Assign', 'member-directory' ),
+            'manage_options',
+            'assign',
+            [ $assign, 'assign_page' ]
         );
     }
 

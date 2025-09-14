@@ -4,6 +4,7 @@ use MemberDirectory\App\Src\Admin;
 use MemberDirectory\App\Src\Front;
 use MemberDirectory\App\Src\Member;
 use MemberDirectory\App\Src\Team;
+use MemberDirectory\App\Src\Assign;
 
 class Loader {
 
@@ -13,6 +14,7 @@ class Loader {
             new Admin();
             new Member();
             new Team();
+            new Assign();
         }else{
             new Front();
         }
