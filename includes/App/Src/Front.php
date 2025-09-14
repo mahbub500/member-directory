@@ -15,7 +15,9 @@ class Front {
     }
 
     public function head(){
-        // Utility::pri();
-        // md_handle_image_upload();
+        // $members = get_members_by_team(4);
+
+        // Utility::pri( $members );
+        // get_team_members( 4 );
     }
 }

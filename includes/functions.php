@@ -113,4 +113,36 @@ if ( ! function_exists( 'get_data' ) ) {
         ];
     }
 
+    /**
+     * Get all members for a specific team.
+     *
+     * @param int $team_id The team ID.
+     * @return array List of member objects
+     */
+    function get_members_by_team($team_id) {
+        global $wpdb;
+
+        $rel_table = $wpdb->prefix . 'md_member_team_relations';
+        $members_table = $wpdb->prefix . 'md_members';
+
+        // Get member_ids string
+        $member_ids_str = $wpdb->get_var(
+            $wpdb->prepare("SELECT member_ids FROM $rel_table WHERE team_id = %d", $team_id)
+        );
+
+        if (!$member_ids_str) {
+            return []; // No members
+        }
+
+        $member_ids = array_map('intval', explode(',', $member_ids_str));
+
+        // Fetch member details
+        $placeholders = implode(',', array_fill(0, count($member_ids), '%d'));
+        $query = $wpdb->prepare(
+            "SELECT * FROM $members_table WHERE id IN ($placeholders)",
+            ...$member_ids
+        );
+
+        return $wpdb->get_results($query);
+    }
 }

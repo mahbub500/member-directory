@@ -15,7 +15,7 @@ class Team {
         $this->register_ajax( 'md_add_team', [ $this, 'add_team' ] );
         $this->register_ajax( 'md_edit_team', [ $this, 'edit_team' ] );
         $this->register_ajax( 'md_delete_team', [ $this, 'delete_team' ] );
-
+        
         $this->action( 'admin_footer', [$this, 'footer'] );
     }
 
@@ -98,10 +98,6 @@ class Team {
 
         wp_send_json_success(['message'=>'Team deleted successfully']);
     }
-
-
-
-
     public function teams_page() {        
 
         $page   = isset($_GET['page_num']) ? intval($_GET['page_num']) : 1;

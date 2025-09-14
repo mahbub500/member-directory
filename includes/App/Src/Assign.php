@@ -12,6 +12,8 @@ class Assign {
 
     public function __construct() {
         $this->register_ajax( 'md_add_member', [ $this, 'add_member' ] );
+        $this->register_ajax( 'md_assign_to_team', [ $this, 'assign_to_team' ] );
+        $this->register_ajax( 'md_remove_from_team', [ $this, 'remove_from_team' ] );
 
         // $this->register_ajax( 'md_delete_member', [ $this, 'delete_member' ] );
 
@@ -22,7 +24,182 @@ class Assign {
         // $this->action( 'admin_footer', [$this, 'footer'] );
     }
 
+    public function assign_to_team() {
+        // ✅ Nonce check
+        if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'] ) ) {
+            wp_send_json_error([ 'message' => 'Invalid nonce' ]);
+            return;
+        }
+
+        $member_id = isset($_POST['member_id']) ? intval($_POST['member_id']) : 0;
+        $team_id   = isset($_POST['team_id'])   ? intval($_POST['team_id'])   : 0;
+
+        if ( empty($member_id) || empty($team_id) ) {
+            wp_send_json_error([ 'message' => 'Invalid data.' ]);
+            return;
+        }
+
+        global $wpdb;
+        $table = $wpdb->prefix . 'md_member_team_relations'; // relation table
+
+        // ✅ Get existing members for this team
+        $existing = $wpdb->get_var(
+            $wpdb->prepare("SELECT member_ids FROM $table WHERE team_id=%d", $team_id)
+        );
+
+        // Convert to array
+        $members = $existing ? explode(',', $existing) : [];
+
+        // Check for duplicate
+        if (in_array($member_id, $members)) {
+            wp_send_json_error([ 'message' => 'Member already in this team.' ]);
+            return;
+        }
+
+        // Add new member
+        $members[] = $member_id;
+        $member_ids_str = implode(',', $members);
+
+        // Update if exists, else insert new row
+        if ($existing) {
+            $updated = $wpdb->update(
+                $table,
+                ['member_ids' => $member_ids_str, 'assigned_at' => current_time('mysql')],
+                ['team_id' => $team_id],
+                ['%s', '%s'],
+                ['%d']
+            );
+
+            if ($updated === false) {
+                wp_send_json_error(['message' => 'Database error: ' . $wpdb->last_error]);
+                return;
+            }
+        } else {
+            $inserted = $wpdb->insert(
+                $table,
+                ['team_id' => $team_id, 'member_ids' => $member_ids_str, 'assigned_at' => current_time('mysql')],
+                ['%d', '%s', '%s']
+            );
+
+            if ($inserted === false) {
+                wp_send_json_error(['message' => 'Database error: ' . $wpdb->last_error]);
+                return;
+            }
+        }
+
+        wp_send_json_success([
+            'message' => 'Member assigned successfully.',
+            'member_ids' => $member_ids_str
+        ]);
+    }
+
+    public function remove_from_team() {
+        // Nonce check
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'] )) {
+            wp_send_json_error(['message' => 'Invalid nonce']);
+        }
+
+        $member_id = intval($_POST['member_id']);
+        $team_id   = intval($_POST['team_id']);
+
+        if (!$member_id || !$team_id) {
+            wp_send_json_error(['message' => 'Invalid data.']);
+        }
+
+        global $wpdb;
+        $table = $wpdb->prefix . 'md_member_team_relations';
+
+        // Get existing member_ids
+        $row = $wpdb->get_row($wpdb->prepare("SELECT member_ids FROM $table WHERE team_id=%d", $team_id));
+
+        if (!$row) {
+            wp_send_json_error(['message' => 'Team not found.']);
+        }
+
+        $member_ids = explode(',', $row->member_ids);
+        $member_ids = array_map('trim', $member_ids);
+
+        // Remove the member ID
+        $member_ids = array_diff($member_ids, [$member_id]);
+
+        if (empty($member_ids)) {
+            // No members left, optionally delete the row
+            $deleted = $wpdb->delete($table, ['team_id' => $team_id]);
+        } else {
+            // Update the member_ids list
+            $updated = $wpdb->update(
+                $table,
+                ['member_ids' => implode(',', $member_ids)],
+                ['team_id' => $team_id]
+            );
+        }
+
+        wp_send_json_success(['message' => 'Member removed from team.']);
+    }
+
+
+
+
     public function assign_page(){
-        echo "Assign";
+        $page       = isset($_GET['page_num']) ? intval($_GET['page_num']) : 1;
+        $members    = get_data('md_members', $page, 10);
+        $teams      = get_data('md_teams', $page, 10);
+        ?>
+        <div class="container-fluid p-4">
+
+          <div class="row">
+
+            <!-- Members List -->
+            <div class="col-md-5">
+              <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">All Members</div>
+                <div class="card-body">
+                  <ul id="members-list" class="list-group">
+                    <?php foreach ($members['data'] as $m): ?>
+                      <li class="list-group-item member-item" 
+                          data-id="<?php echo esc_attr($m->id); ?>">
+                        <?php echo esc_html($m->first_name . ' ' . $m->last_name); ?>
+                      </li>
+                    <?php endforeach; ?>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Teams List -->
+            <div class="col-md-7">
+              <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white">Teams</div>
+                <div class="card-body">
+                  <?php foreach ($teams['data'] as $t): ?>
+                    <div class="team-container mb-3 p-2 border rounded" data-team-id="<?php echo esc_attr($t->id); ?>">
+                      <h5><?php echo esc_html($t->name); ?></h5>
+
+                      <!-- Team Members -->
+                      <ul class="team-members list-group mb-2">
+                      <?php
+                      $team_members = get_members_by_team($t->id);  
+                      foreach ($team_members as $tm): ?>
+                        <li class="list-group-item member-item" data-id="<?php echo esc_attr($tm->id); ?>">
+                          <?php echo esc_html($tm->first_name . ' ' . $tm->last_name); ?>
+                          <button class="btn btn-sm btn-danger float-end md-remove-member" data-member-id="<?php echo esc_attr($tm->id); ?>" data-team-id="<?php echo esc_attr($t->id); ?>">×</button>
+                        </li>
+                      <?php endforeach; ?>
+                    </ul>
+
+
+                      <small class="text-muted">Drag members here</small>
+                    </div>
+                  <?php endforeach; ?>
+                </div>
+              </div>
+            </div>
+
+          </div> <!-- .row -->
+
+        </div> <!-- .container-fluid -->
+
+
+        <?php 
     }
 }

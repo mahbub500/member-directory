@@ -21,6 +21,18 @@ class Admin {
 
     public function enqueue_assets() {
 
+        wp_enqueue_script('jquery');
+
+        // jQuery UI (for draggable/droppable)
+        wp_enqueue_script('jquery-ui-core');
+        wp_enqueue_script('jquery-ui-draggable');
+        wp_enqueue_script('jquery-ui-droppable');
+
+        wp_enqueue_style(
+            'jquery-ui-css',
+            'https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css'
+        );
+
         wp_enqueue_style(
             'md-admin-css',
             MD_ASSETS_URL . 'css/admin.css',
@@ -32,7 +44,7 @@ class Admin {
         wp_enqueue_script(
             'md-admin',
             MD_ASSETS_URL . 'js/admin.js', // Use MD_ASSETS_URL
-            [ 'jquery' ],
+            ['jquery', 'jquery-ui-draggable', 'jquery-ui-droppable'],
             time(),
             true
         );

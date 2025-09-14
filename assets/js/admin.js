@@ -410,4 +410,94 @@
         });
     });
 
+    /*Drag and Drop*/
+
+    // Make members draggable
+    $('#members-list .member-item').draggable({
+        helper: 'clone', // clone element
+        revert: 'invalid', // revert if not dropped on droppable
+        cursor: 'move'
+    });
+
+    // Make team member lists droppable
+    $('.team-members').droppable({
+        accept: '#members-list .member-item',
+        hoverClass: 'ui-state-hover',
+        drop: function(event, ui) {
+            const memberId = $(ui.draggable).data('id');
+            const teamId = $(this).closest('.team-container').data('team-id');
+
+            // Check if member already exists in team
+            if ($(this).find(`li[data-id="${memberId}"]`).length) {
+                alert('Member already in this team.');
+                return;
+            }
+
+            // AJAX call to assign member
+            $.ajax({
+                url: MD_AJAX.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'md_assign_to_team',
+                    nonce: MD_AJAX.nonce,
+                    member_id: memberId,
+                    team_id: teamId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Add member to team list
+                        const memberName = $(ui.draggable).text();
+                        $(`.team-container[data-team-id="${teamId}"] .team-members`).append(
+                            `<li class="list-group-item member-item" data-id="${memberId}">${memberName}</li>`
+                        );
+                        console.log('✅ Member assigned successfully');
+                    } else {
+                        alert(response.data.message || 'Failed to assign member.');
+                    }
+                },
+                error: function() {
+                    alert('Something went wrong!');
+                }
+            });
+        }
+    });
+    
+
+
 })(jQuery);
+
+jQuery(document).on('click', '.md-remove-member', function() {
+    const memberId = jQuery(this).data('member-id');
+    const teamId = jQuery(this).data('team-id');
+    const $li = jQuery(this).closest('li');
+
+    jQuery.ajax({
+        url: MD_AJAX.ajaxurl,
+        type: 'POST',
+        data: {
+            action: 'md_remove_from_team',
+            nonce: MD_AJAX.nonce,
+            member_id: memberId,
+            team_id: teamId
+        },
+        success: function(response) {
+            if (response.success) {
+                $li.remove(); // remove from DOM
+                console.log('Member removed successfully');
+            } else {
+                alert(response.data.message || 'Failed to remove member.');
+            }
+        },
+        error: function() {
+            alert('Something went wrong!');
+        }
+    });
+});
+
+
+
+
+
+    
+
+

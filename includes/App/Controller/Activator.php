@@ -44,13 +44,11 @@ class Activator {
         // Relation Table
         $sql3 = "CREATE TABLE $table_rel (
             id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            member_id BIGINT(20) UNSIGNED NOT NULL,
             team_id BIGINT(20) UNSIGNED NOT NULL,
+            member_ids TEXT NOT NULL, 
             assigned_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
-            FOREIGN KEY (member_id) REFERENCES $table_members(id) ON DELETE CASCADE,
-            FOREIGN KEY (team_id) REFERENCES $table_teams(id) ON DELETE CASCADE,
-            UNIQUE KEY member_team_unique (member_id, team_id)
+            FOREIGN KEY (team_id) REFERENCES $table_teams(id) ON DELETE CASCADE
         ) $charset_collate;";
 
         dbDelta($sql1);
