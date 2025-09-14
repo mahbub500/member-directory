@@ -170,25 +170,23 @@ class Assign {
             <div class="col-md-7">
               <div class="card shadow-sm h-100">
                 <div class="card-header bg-success text-white">Teams</div>
-                <div class="card-body">
+                <div class="card-body" style="max-height: 600px; overflow-y: auto;"> <!-- Scrollable container -->
                   <?php foreach ($teams['data'] as $t): ?>
                     <div class="team-container mb-3 p-2 border rounded" data-team-id="<?php echo esc_attr($t->id); ?>">
                       <h5><?php echo esc_html($t->name); ?></h5>
 
                       <!-- Team Members -->
-                      <ul class="team-members list-group mb-2">
-
-                      <?php
-                      $team_members = get_members_by_team($t->id);  
-                      foreach ($team_members as $tm): ?>
-                        <li class="list-group-item member-item" data-id="<?php echo esc_attr($tm->id); ?>">
-                          <?php echo esc_html($tm->first_name . ' ' . $tm->last_name); ?>
-                          <button class="btn btn-sm btn-danger float-end md-remove-member" data-member-id="<?php echo esc_attr($tm->id); ?>" data-team-id="<?php echo esc_attr($t->id); ?>">×</button>
-                        </li>
-                      <?php endforeach; ?>
+                      <ul class="team-members list-group mb-2" style="max-height: 200px; overflow-y: auto;">
+                        <?php
+                        $team_members = get_members_by_team($t->id);  
+                        foreach ($team_members as $tm): ?>
+                          <li class="list-group-item member-item" data-id="<?php echo esc_attr($tm->id); ?>">
+                            <?php echo esc_html($tm->first_name . ' ' . $tm->last_name); ?>
+                            <button class="btn btn-sm btn-danger float-end md-remove-member" data-member-id="<?php echo esc_attr($tm->id); ?>" data-team-id="<?php echo esc_attr($t->id); ?>">×</button>
+                          </li>
+                        <?php endforeach; ?>
                         <li class="team-members-li"></li>
-                    </ul>
-
+                      </ul>
 
                       <small class="text-muted">Drag members here</small>
                     </div>
@@ -196,6 +194,7 @@ class Assign {
                 </div>
               </div>
             </div>
+
 
           </div> <!-- .row -->
 
