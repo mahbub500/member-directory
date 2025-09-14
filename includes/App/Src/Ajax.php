@@ -18,22 +18,13 @@ class Ajax {
 
     /** ================= AJAX ================= */
     public function add_member() {
-        if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce']  ) ) {
-            wp_send_json_error(['message' => 'Invalid nonce']);
-            return;
+        if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'] ) ) {
+            wp_send_json_error(['data' => 'Invalid nonce']);
         }
 
         global $wpdb;
         $table = $wpdb->prefix . 'md_members';
 
-        // Optional: check if email exists
-        $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$table} WHERE email=%s", $_POST['email']));
-        if($exists) {
-            wp_send_json_error(['message'=>'Email already exists']);
-            return;
-        }
-
-        // Handle images
         $profile_image = md_handle_image_upload($_FILES['profile_image'], 'profile');
         $cover_image   = md_handle_image_upload($_FILES['cover_image'], 'cover');
 
@@ -41,6 +32,7 @@ class Ajax {
             'first_name'     => sanitize_text_field($_POST['first_name']),
             'last_name'      => sanitize_text_field($_POST['last_name']),
             'email'          => sanitize_email($_POST['email']),
+            'address'        => sanitize_text_field($_POST['address']),
             'profile_image'  => $profile_image,
             'cover_image'    => $cover_image,
             'favorite_color' => sanitize_text_field($_POST['favorite_color']),
@@ -48,8 +40,17 @@ class Ajax {
             'created_at'     => current_time('mysql'),
         ]);
 
-        wp_send_json_success([ 'message' => 'Member added successfully.' ]);
+        $member_id = $wpdb->insert_id;
+
+        // Get the full member data
+        $member = $wpdb->get_row("SELECT * FROM {$table} WHERE id = {$member_id}");
+
+        wp_send_json_success([
+            'data'   => 'Member added successfully.',
+            'member' => $member
+        ]);
     }
+
 
 
     public function add_team() {

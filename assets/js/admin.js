@@ -21,30 +21,70 @@
 	    const formData = new FormData(this); // includes files automatically
 	    formData.append('action', 'md_add_member');
 	    formData.append('nonce', MD_AJAX.nonce);
-
-	    // Optional: show loader
+		
+		// Optional: show loader
 	    md_modal(true);
 
 	    $.ajax({
-	        url: MD_AJAX.ajaxurl,
-	        type: 'POST',
-	        data: formData,
-	        contentType: false,
-	        processData: false,
-	        success: function(response) {
-	            md_modal(false);
-	            if (response.success) {
-	                alert(response.data);
-	                location.reload();
-	            } else {
-	                alert(response.data || 'Error adding member.');
-	            }
-	        },
-	        error: function() {
-	            md_modal(false);
-	            alert('Something went wrong!');
-	        }
-	    });
+		    url: MD_AJAX.ajaxurl,
+		    type: 'POST',
+		    data: formData,
+		    contentType: false,
+		    processData: false,
+		    success: function(response) {
+		        md_modal(false);
+
+		        if (response.success) {            
+
+		            // Dynamically add new member to the table
+		            const member = response.data.member; // You should return the newly added member's data from PHP
+		            
+		            // Create the table row
+		            let newRow = `
+		                <tr class="md-member-row"
+		                    data-id="${member.id}"
+		                    data-firstname="${member.first_name}"
+		                    data-lastname="${member.last_name}"
+		                    data-email="${member.email}"
+		                    data-address="${member.address}"
+		                    data-color="${member.favorite_color}"
+		                    data-status="${member.status}"
+		                    data-profile="${member.profile_image}"
+		                    data-cover="${member.cover_image}"
+		                >
+		                    <td>${member.id}</td>
+		                    <td>${member.profile_image ? `<img src="${member.profile_image}" alt="Profile" style="width:40px;height:40px;border-radius:50%;cursor:pointer;">` : `<span class="text-muted">N/A</span>`}</td>
+		                    <td>${member.cover_image ? `<img src="${member.cover_image}" alt="Cover" style="width:60px;height:40px;object-fit:cover;border-radius:4px;cursor:pointer;">` : `<span class="text-muted">N/A</span>`}</td>
+		                    <td>${member.first_name} ${member.last_name}</td>
+		                    <td>${member.email}</td>
+		                    <td>${member.address || ''}</td>
+		                    <td><span style="background:${member.favorite_color};padding:5px 15px;display:inline-block;border-radius:4px;"></span></td>
+		                    <td>${member.status}</td>
+		                    <td>
+		                        <button class="btn btn-sm btn-primary md-edit-member" data-id="${member.id}">Edit</button>
+		                        <button class="btn btn-sm btn-danger md-delete-member" data-id="${member.id}">Delete</button>
+		                    </td>
+		                </tr>
+		            `;
+
+		            // Append to table body
+		            $('#md-members-list').append(newRow);
+
+		            // Optionally, reset the form
+		            $('#md-add-member-form')[0].reset();
+		            $('#profile-image-preview').html('');
+		            $('#cover-image-preview').html('');
+
+		        } else {
+		            alert(response.data || 'Error adding member.');
+		        }
+		    },
+		    error: function() {
+		        md_modal(false);
+		        alert('Something went wrong!');
+		    }
+		});
+
 	});
 
 
