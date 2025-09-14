@@ -15,6 +15,6 @@ class Front {
     }
 
     public function head(){
-        Utility::pri( 'Hello' );
+        // Utility::pri( 'Hello' );
     }
 }
