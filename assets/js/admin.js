@@ -78,6 +78,29 @@
         }
     });
 
+    // Click on entire row
+    $(document).on('click', '.md-member-row', function(e){
+	    // If clicked element is Edit or Delete button, do nothing
+	    if ($(e.target).hasClass('md-edit-member') || $(e.target).hasClass('md-delete-member')) return;
+
+	    var row = $(this);
+
+	    // Populate modal
+	    $('#md-modal-profile').attr('src', row.data('profile') || '');
+	    $('#md-modal-cover').attr('src', row.data('cover') || '');
+	    $('#md-modal-name').text(row.data('firstname') + ' ' + row.data('lastname'));
+	    $('#md-modal-email').text(row.data('email'));
+	    $('#md-modal-address').text(row.data('address'));
+	    $('#md-modal-color').css('background', row.data('color'));
+	    $('#md-modal-status').text(row.data('status'));
+
+	    // Show modal
+	    $('#md-image-modal').modal('show');
+	});
+
+
+
+
     // Delete Member via AJAX
     $(document).on('click', '.md-delete-member', function(e) {
         e.preventDefault();

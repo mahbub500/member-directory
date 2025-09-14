@@ -179,7 +179,7 @@ class Admin {
                 <div class="card shadow-sm h-100">
                     <div class="card-header bg-dark text-white">All Members</div>
                     <div class="card-body table-responsive">
-                        <table class="table table-striped table-hover align-middle">
+                        <table class="table table-striped table-hover align-middle profile_image md-members-table">
                             <thead class="table-dark">
                                 <tr>
                                     <th>ID</th>
@@ -195,43 +195,39 @@ class Admin {
                             </thead>
                             <tbody id="md-members-list">
                                 <?php foreach ($members as $m): ?>
-                                    <tr>
+                                    <tr class="md-member-row"
+                                        data-id="<?php echo esc_attr($m->id); ?>"
+                                        data-firstname="<?php echo esc_attr($m->first_name); ?>"
+                                        data-lastname="<?php echo esc_attr($m->last_name); ?>"
+                                        data-email="<?php echo esc_attr($m->email); ?>"
+                                        data-address="<?php echo esc_attr($m->address); ?>"
+                                        data-color="<?php echo esc_attr($m->favorite_color); ?>"
+                                        data-status="<?php echo esc_attr($m->status); ?>"
+                                        data-profile="<?php echo esc_url($m->profile_image); ?>"
+                                        data-cover="<?php echo esc_url($m->cover_image); ?>"
+                                    >
                                         <td><?php echo esc_html($m->id); ?></td>
-
-                                        <!-- Profile Image -->
                                         <td>
                                             <?php if (!empty($m->profile_image)): ?>
-                                                <img src="<?php echo esc_url($m->profile_image); ?>" alt="Profile" style="width:40px;height:40px;border-radius:50%;">
+                                                <img src="<?php echo esc_url($m->profile_image); ?>" alt="Profile" style="width:40px;height:40px;border-radius:50%;cursor:pointer;">
                                             <?php else: ?>
                                                 <span class="text-muted">N/A</span>
                                             <?php endif; ?>
                                         </td>
-
-                                        <!-- Cover Image -->
                                         <td>
                                             <?php if (!empty($m->cover_image)): ?>
-                                                <img src="<?php echo esc_url($m->cover_image); ?>" alt="Cover" style="width:60px;height:40px;object-fit:cover;border-radius:4px;">
+                                                <img src="<?php echo esc_url($m->cover_image); ?>" alt="Cover" style="width:60px;height:40px;object-fit:cover;border-radius:4px;cursor:pointer;">
                                             <?php else: ?>
                                                 <span class="text-muted">N/A</span>
                                             <?php endif; ?>
                                         </td>
-
-                                        <!-- Name & Email -->
                                         <td><?php echo esc_html($m->first_name . ' ' . $m->last_name); ?></td>
                                         <td><?php echo esc_html($m->email); ?></td>
-
-                                        <!-- Address -->
                                         <td><?php echo esc_html($m->address ?? ''); ?></td>
-
-                                        <!-- Favorite Color -->
                                         <td>
                                             <span style="background:<?php echo esc_attr($m->favorite_color); ?>;padding:5px 15px;display:inline-block;border-radius:4px;"></span>
                                         </td>
-
-                                        <!-- Status -->
                                         <td><?php echo esc_html($m->status); ?></td>
-
-                                        <!-- Action Buttons -->
                                         <td>
                                             <button class="btn btn-sm btn-primary md-edit-member" data-id="<?php echo esc_attr($m->id); ?>">Edit</button>
                                             <button class="btn btn-sm btn-danger md-delete-member" data-id="<?php echo esc_attr($m->id); ?>">Delete</button>
@@ -290,7 +286,7 @@ class Admin {
                 <div class="card shadow-sm h-100">
                     <div class="card-header bg-dark text-white">All Teams</div>
                     <div class="card-body table-responsive">
-                        <table class="table table-striped table-hover align-middle">
+                        <table class="table table-striped table-hover align-middle ">
                             <thead class="table-dark">
                                 <tr>
                                     <th>ID</th><th>Name</th><th>Description</th>
@@ -322,6 +318,62 @@ class Admin {
                 <p>Please wait...</p>
             </div>
         </div>
+
+        <div class="modal fade" id="md-image-modal" tabindex="-1" aria-labelledby="mdImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 overflow-hidden">
+            
+            <!-- Cover Image -->
+            <div class="position-relative">
+                <img src="" id="md-modal-cover" class="img-fluid w-100" style="height:200px; object-fit:cover;" alt="Cover">
+                
+                <!-- Profile Image -->
+                <img src="" id="md-modal-profile" class="rounded-circle border border-white position-absolute"
+                     style="width:120px; height:120px; bottom:-60px; left:30px; object-fit:cover; background:#fff;" alt="Profile">
+            </div>
+            
+            <div class="modal-body pt-5">
+                <h5 class="modal-title mb-3 mt-3" id="mdImageModalLabel">Member Details</h5>
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-borderless mb-0">
+                            <tbody>
+                                <tr>
+                                    <th style="width:150px;">Name:</th>
+                                    <td><span id="md-modal-name"></span></td>
+                                </tr>
+                                <tr>
+                                    <th>Email:</th>
+                                    <td><span id="md-modal-email"></span></td>
+                                </tr>
+                                <tr>
+                                    <th>Address:</th>
+                                    <td><span id="md-modal-address"></span></td>
+                                </tr>
+                                <tr>
+                                    <th>Favorite Color:</th>
+                                    <td>
+                                        <span id="md-modal-color"
+                                              style="padding:5px 15px; display:inline-block; border-radius:4px;"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Status:</th>
+                                    <td><span id="md-modal-status"></span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
 
         <?php
     }
