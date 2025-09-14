@@ -327,4 +327,77 @@
             }
         });
     });
+
+    $(document).on('click', '.md-edit-team', function(){
+        const row = $(this).closest('tr');
+        $('#md-edit-team-id').val(row.data('id'));
+        $('#md-edit-team-name').val(row.data('name'));
+        $('#md-edit-team-description').val(row.data('description'));
+        $('#md-edit-team-modal').modal('show');
+    });
+
+    // Save Edit
+    $(document).on('submit', '#md-edit-team-form', function(e){
+        e.preventDefault();
+        const formData = new FormData(this);
+        formData.append('action', 'md_edit_team');
+        formData.append('nonce', MD_AJAX.nonce);
+
+        $.ajax({
+            url: MD_AJAX.ajaxurl,
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response){
+                if(response.success){
+                    const team = response.data.team;
+                    const row = $('.md-team-row[data-id="'+team.id+'"]');
+                    row.data('name', team.name).data('description', team.short_description);
+                    row.find('td:nth-child(2)').text(team.name);
+                    row.find('td:nth-child(3)').text(team.short_description);
+
+                    $('#md-edit-team-modal').modal('hide');
+                } else {
+                    alert(response.data.message || 'Update failed');
+                }
+            },
+            error: function(){
+                alert('Something went wrong!');
+            }
+        });
+    });
+
+    // Open Delete Modal
+    $(document).on('click', '.md-delete-team', function(){
+        const row = $(this).closest('tr');
+        $('#md-delete-team-id').val(row.data('id'));
+        $('#md-delete-team-modal').modal('show');
+    });
+
+    // Confirm Delete
+    $(document).on('click', '#md-confirm-delete-team', function(){
+        const team_id = $('#md-delete-team-id').val();
+        $.ajax({
+            url: MD_AJAX.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'md_delete_team',
+                id: team_id,
+                nonce: MD_AJAX.nonce
+            },
+            success: function(response){
+                if(response.success){
+                    $('.md-team-row[data-id="'+team_id+'"]').remove();
+                    $('#md-delete-team-modal').modal('hide');
+                } else {
+                    alert(response.data.message || 'Delete failed');
+                }
+            },
+            error: function(){
+                alert('Something went wrong!');
+            }
+        });
+    });
+
 })(jQuery);

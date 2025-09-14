@@ -46,7 +46,7 @@
     color: #333;
 }
 
-#md-all-members .card {
+#md-all-members .card, .md-team-form .card {
     max-width: none !important;
 }
 
