@@ -177,6 +177,7 @@ class Assign {
 
                       <!-- Team Members -->
                       <ul class="team-members list-group mb-2">
+
                       <?php
                       $team_members = get_members_by_team($t->id);  
                       foreach ($team_members as $tm): ?>
@@ -185,6 +186,7 @@ class Assign {
                           <button class="btn btn-sm btn-danger float-end md-remove-member" data-member-id="<?php echo esc_attr($tm->id); ?>" data-team-id="<?php echo esc_attr($t->id); ?>">×</button>
                         </li>
                       <?php endforeach; ?>
+                        <li class="team-members-li"></li>
                     </ul>
 
 

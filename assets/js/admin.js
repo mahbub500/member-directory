@@ -420,43 +420,38 @@
     });
 
     // Make team member lists droppable
+     // Make team lists droppable
     $('.team-members').droppable({
-        accept: '#members-list .member-item',
-        hoverClass: 'ui-state-hover',
+        accept: '.member-item',
+        hoverClass: 'bg-light',
         drop: function(event, ui) {
             const memberId = $(ui.draggable).data('id');
+            const memberName = $(ui.draggable).text().trim();
             const teamId = $(this).closest('.team-container').data('team-id');
 
-            // Check if member already exists in team
-            if ($(this).find(`li[data-id="${memberId}"]`).length) {
-                alert('Member already in this team.');
+            // Prevent duplicate
+            if ($(this).find('li[data-id="' + memberId + '"]').length > 0) {
+                alert('Member already in this team!');
                 return;
             }
 
-            // AJAX call to assign member
-            $.ajax({
-                url: MD_AJAX.ajaxurl,
-                type: 'POST',
-                data: {
-                    action: 'md_assign_to_team',
-                    nonce: MD_AJAX.nonce,
-                    member_id: memberId,
-                    team_id: teamId
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Add member to team list
-                        const memberName = $(ui.draggable).text();
-                        $(`.team-container[data-team-id="${teamId}"] .team-members`).append(
-                            `<li class="list-group-item member-item" data-id="${memberId}">${memberName}</li>`
-                        );
-                        console.log('✅ Member assigned successfully');
-                    } else {
-                        alert(response.data.message || 'Failed to assign member.');
-                    }
-                },
-                error: function() {
-                    alert('Something went wrong!');
+            // Append a **copied** member
+            const li = $('<li class="list-group-item member-item" data-id="' + memberId + '">' +
+                         memberName +
+                         '<button class="btn btn-sm btn-danger float-end md-remove-member" data-member-id="' + memberId + '" data-team-id="' + teamId + '">×</button>' +
+                         '</li>');
+            $(this).append(li);
+
+            // AJAX: assign member
+            $.post(MD_AJAX.ajaxurl, {
+                action: 'md_assign_to_team',
+                nonce: MD_AJAX.nonce,
+                member_id: memberId,
+                team_id: teamId
+            }, function(response) {
+                if (!response.success) {
+                    alert(response.data.message || 'Failed to assign member.');
+                    li.remove(); // remove if failed
                 }
             });
         }
