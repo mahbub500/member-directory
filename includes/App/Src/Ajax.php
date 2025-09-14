@@ -13,6 +13,8 @@ class Ajax {
     public function __construct() {
         $this->register_ajax( 'md_add_member', [ $this, 'add_member' ] );
 
+        $this->register_ajax( 'md_delete_member', [ $this, 'delete_member' ] );
+
         $this->register_ajax( 'md_add_team', [ $this, 'add_team' ] );
     }
 
@@ -49,6 +51,31 @@ class Ajax {
             'data'   => 'Member added successfully.',
             'member' => $member
         ]);
+    }
+
+    function delete_member() {
+        // Check nonce
+        if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'] ) ) {
+            wp_send_json_error(['message' => 'Invalid nonce']);
+            return;
+        }
+
+        if ( empty($_POST['member_id']) ) {
+            wp_send_json_error(['message' => 'Member ID is required']);
+            return;
+        }
+
+        global $wpdb;
+        $table = $wpdb->prefix . 'md_members';
+        $id    = intval($_POST['member_id']);
+
+        $deleted = $wpdb->delete($table, ['id' => $id]);
+
+        if ( $deleted ) {
+            wp_send_json_success(['message' => 'Member deleted successfully']);
+        } else {
+            wp_send_json_error(['message' => 'Failed to delete member']);
+        }
     }
 
 

@@ -148,6 +148,7 @@
         if (!confirm('Are you sure you want to delete this member?')) return;
 
         const memberId = $(this).data('id');
+        console.log( memberId );
         if (!memberId) return;
 
         md_modal( true );
@@ -162,11 +163,8 @@
             },
             success: function(response) {
                 if (response.success) {
-                    alert(response.data);
-                    location.reload();
-                } else {
-                    alert(response.data || 'Error deleting member.');
-                }
+                    $('.md-member-row[data-id="' + memberId + '"]').remove();
+                } 
                 md_modal(false);
             },
             error: function() {
