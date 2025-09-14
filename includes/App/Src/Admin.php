@@ -90,161 +90,182 @@ class Admin {
         );
     }
 
-    /** ================= MEMBERS ================= */
+    /** ================= MEMBERS PAGE ================= */
     public function members_page() {
-    global $wpdb;
-    $members = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}md_members");
-    ?>
+        // Current page for pagination
+        $page = isset($_GET['page_num']) ? intval($_GET['page_num']) : 1;
 
-    <div class="container-fluid p-4" id="md-all-memebers">
-        <h1 class="mb-4"><?php esc_html_e('Members', 'member-directory'); ?></h1>
+        // Fetch members using your generic function
+        $result = get_data('md_members', $page, 10);
+        $members = $result['data'];
+        $total_pages = $result['total_pages'];
+        $current_page = $result['current_page'];
+        $total_members = $result['total_items'];
+        ?>
 
-        <div class="row g-4">
+        <div class="container-fluid p-4" id="md-all-members">
+            <h1 class="mb-4"><?php esc_html_e('Members', 'member-directory'); ?></h1>
 
-            <!-- Left Column: Add Member Form -->
-            <div class="col-lg-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header bg-primary text-white">Add Member</div>
-                    <div class="card-body">
-                        <form id="md-add-member-form" class="row g-3" enctype="multipart/form-data">
-                            <?php wp_nonce_field('md_nonce', 'security'); ?>
+            <div class="row g-4">
 
-                            <!-- First Name -->
-                            <div class="col-12">
-                                <label class="form-label">First Name</label>
-                                <input type="text" name="first_name" class="form-control" required>
-                            </div>
+                <!-- Left Column: Add Member Form -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-primary text-white">Add Member</div>
+                        <div class="card-body">
+                            <form id="md-add-member-form" class="row g-3" enctype="multipart/form-data">
+                                <?php wp_nonce_field('md_nonce', 'security'); ?>
 
-                            <!-- Last Name -->
-                            <div class="col-12">
-                                <label class="form-label">Last Name</label>
-                                <input type="text" name="last_name" class="form-control" required>
-                            </div>
+                                <!-- First Name -->
+                                <div class="col-12">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" name="first_name" class="form-control" required>
+                                </div>
 
-                            <!-- Email -->
-                            <div class="col-12">
-                                <label class="form-label">Email</label>
-                                <input type="email" name="email" class="form-control" required>
-                            </div>
+                                <!-- Last Name -->
+                                <div class="col-12">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" name="last_name" class="form-control" required>
+                                </div>
 
-                            <!-- Profile Image -->
-                            <div class="col-12">
-                                <label class="form-label">Profile Image</label>
-                                <input type="file" name="profile_image" class="form-control" accept="image/*">
-                                <div id="profile-image-preview" style="margin-top:10px;"></div>
-                            </div>
+                                <!-- Email -->
+                                <div class="col-12">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" name="email" class="form-control" required>
+                                </div>
 
-                            <!-- Cover Image -->
-                            <div class="col-12">
-                                <label class="form-label">Cover Image</label>
-                                <input type="file" name="cover_image" class="form-control" accept="image/*">
-                                <div id="cover-image-preview" style="margin-top:10px;"></div>
-                            </div>
+                                <!-- Profile Image -->
+                                <div class="col-12">
+                                    <label class="form-label">Profile Image</label>
+                                    <input type="file" name="profile_image" class="form-control" accept="image/*">
+                                    <div id="profile-image-preview" style="margin-top:10px;"></div>
+                                </div>
 
-                            <!-- Address -->
-                            <div class="col-12">
-                                <label class="form-label">Address</label>
-                                <textarea name="address" class="form-control" rows="2"></textarea>
-                            </div>
+                                <!-- Cover Image -->
+                                <div class="col-12">
+                                    <label class="form-label">Cover Image</label>
+                                    <input type="file" name="cover_image" class="form-control" accept="image/*">
+                                    <div id="cover-image-preview" style="margin-top:10px;"></div>
+                                </div>
 
-                            <!-- Favorite Color -->
-                            <div class="col-6">
-                                <label class="form-label">Favorite Color</label>
-                                <input type="color" name="favorite_color" class="form-control form-control-color" value="#000000">
-                            </div>
+                                <!-- Address -->
+                                <div class="col-12">
+                                    <label class="form-label">Address</label>
+                                    <textarea name="address" class="form-control" rows="2"></textarea>
+                                </div>
 
-                            <!-- Status -->
-                            <div class="col-6">
-                                <label class="form-label">Status</label>
-                                <select name="status" class="form-select">
-                                    <option value="active">Active</option>
-                                    <option value="draft">Draft</option>
-                                </select>
-                            </div>
+                                <!-- Favorite Color -->
+                                <div class="col-6">
+                                    <label class="form-label">Favorite Color</label>
+                                    <input type="color" name="favorite_color" class="form-control form-control-color" value="#000000">
+                                </div>
 
-                            <!-- Submit Button -->
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary w-100">Add Member</button>
-                            </div>
-                        </form>
+                                <!-- Status -->
+                                <div class="col-6">
+                                    <label class="form-label">Status</label>
+                                    <select name="status" class="form-select">
+                                        <option value="active">Active</option>
+                                        <option value="draft">Draft</option>
+                                    </select>
+                                </div>
 
-                        <!-- Message Container -->
-                        <div id="md-member-message" class="mt-3"></div>
+                                <!-- Submit Button -->
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary w-100">Add Member</button>
+                                </div>
+                            </form>
+
+                            <div id="md-member-message" class="mt-3"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Right Column: All Members Table -->
-            <div class="col-lg-8">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header bg-dark text-white">All Members</div>
-                    <div class="card-body table-responsive">
-                        <table class="table table-striped table-hover align-middle profile_image md-members-table">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Profile</th>
-                                    <th>Cover</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Address</th>
-                                    <th>Color</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="md-members-list">
-                                <?php foreach ($members as $m): ?>
-                                    <tr class="md-member-row"
-                                        data-id="<?php echo esc_attr($m->id); ?>"
-                                        data-firstname="<?php echo esc_attr($m->first_name); ?>"
-                                        data-lastname="<?php echo esc_attr($m->last_name); ?>"
-                                        data-email="<?php echo esc_attr($m->email); ?>"
-                                        data-address="<?php echo esc_attr($m->address); ?>"
-                                        data-color="<?php echo esc_attr($m->favorite_color); ?>"
-                                        data-status="<?php echo esc_attr($m->status); ?>"
-                                        data-profile="<?php echo esc_url($m->profile_image); ?>"
-                                        data-cover="<?php echo esc_url($m->cover_image); ?>"
-                                    >
-                                        <td><?php echo esc_html($m->id); ?></td>
-                                        <td>
-                                            <?php if (!empty($m->profile_image)): ?>
-                                                <img src="<?php echo esc_url($m->profile_image); ?>" alt="Profile" style="width:40px;height:40px;border-radius:50%;cursor:pointer;">
-                                            <?php else: ?>
-                                                <span class="text-muted">N/A</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <?php if (!empty($m->cover_image)): ?>
-                                                <img src="<?php echo esc_url($m->cover_image); ?>" alt="Cover" style="width:60px;height:40px;object-fit:cover;border-radius:4px;cursor:pointer;">
-                                            <?php else: ?>
-                                                <span class="text-muted">N/A</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td><?php echo esc_html($m->first_name . ' ' . $m->last_name); ?></td>
-                                        <td><?php echo esc_html($m->email); ?></td>
-                                        <td><?php echo esc_html($m->address ?? ''); ?></td>
-                                        <td>
-                                            <span style="background:<?php echo esc_attr($m->favorite_color); ?>;padding:5px 15px;display:inline-block;border-radius:4px;"></span>
-                                        </td>
-                                        <td><?php echo esc_html($m->status); ?></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-primary md-edit-member" data-id="<?php echo esc_attr($m->id); ?>">Edit</button>
-                                            <button class="btn btn-sm btn-danger md-delete-member" data-id="<?php echo esc_attr($m->id); ?>">Delete</button>
-                                        </td>
+                <!-- Right Column: All Members Table -->
+                <div class="col-lg-8">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-dark text-white">All Members</div>
+                        <div class="card-body table-responsive">
+                            <table class="table table-striped table-hover align-middle profile_image md-members-table">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Profile</th>
+                                        <th>Cover</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Address</th>
+                                        <th>Color</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
                                     </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody id="md-members-list">
+                                    <?php foreach ($members as $m): ?>
+                                        <tr class="md-member-row"
+                                            data-id="<?php echo esc_attr($m->id); ?>"
+                                            data-firstname="<?php echo esc_attr($m->first_name); ?>"
+                                            data-lastname="<?php echo esc_attr($m->last_name); ?>"
+                                            data-email="<?php echo esc_attr($m->email); ?>"
+                                            data-address="<?php echo esc_attr($m->address); ?>"
+                                            data-color="<?php echo esc_attr($m->favorite_color); ?>"
+                                            data-status="<?php echo esc_attr($m->status); ?>"
+                                            data-profile="<?php echo esc_url($m->profile_image); ?>"
+                                            data-cover="<?php echo esc_url($m->cover_image); ?>"
+                                        >
+                                            <td><?php echo esc_html($m->id); ?></td>
+                                            <td>
+                                                <?php if (!empty($m->profile_image)): ?>
+                                                    <img src="<?php echo esc_url($m->profile_image); ?>" alt="Profile" style="width:40px;height:40px;border-radius:50%;cursor:pointer;">
+                                                <?php else: ?>
+                                                    <span class="text-muted">N/A</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <?php if (!empty($m->cover_image)): ?>
+                                                    <img src="<?php echo esc_url($m->cover_image); ?>" alt="Cover" style="width:60px;height:40px;object-fit:cover;border-radius:4px;cursor:pointer;">
+                                                <?php else: ?>
+                                                    <span class="text-muted">N/A</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td><?php echo esc_html($m->first_name . ' ' . $m->last_name); ?></td>
+                                            <td><?php echo esc_html($m->email); ?></td>
+                                            <td><?php echo esc_html($m->address ?? ''); ?></td>
+                                            <td>
+                                                <span style="background:<?php echo esc_attr($m->favorite_color); ?>;padding:5px 15px;display:inline-block;border-radius:4px;"></span>
+                                            </td>
+                                            <td><?php echo esc_html($m->status); ?></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary md-edit-member" data-id="<?php echo esc_attr($m->id); ?>">Edit</button>
+                                                <button class="btn btn-sm btn-danger md-delete-member" data-id="<?php echo esc_attr($m->id); ?>">Delete</button>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+
+                            <!-- Pagination -->
+                            <?php if ($total_pages > 1): ?>
+                                <nav>
+                                    <ul class="pagination mt-3">
+                                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                            <li class="page-item <?php echo $i === $current_page ? 'active' : ''; ?>">
+                                                <a class="page-link" href="<?php echo add_query_arg('page_num', $i); ?>"><?php echo $i; ?></a>
+                                            </li>
+                                        <?php endfor; ?>
+                                    </ul>
+                                </nav>
+                            <?php endif; ?>
+
+                        </div>
                     </div>
                 </div>
-            </div>
 
-        </div> <!-- .row -->
-    </div> <!-- .container-fluid -->
+            </div> <!-- .row -->
+        </div> <!-- .container-fluid -->
 
-    <?php
-}
+        <?php
+    }
+
 
 
 

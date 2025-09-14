@@ -62,6 +62,55 @@ if ( ! function_exists( 'md_handle_image_upload' ) ) {
 
         return false;
     }
+}
 
+if ( ! function_exists( 'get_data' ) ) {
+    /**
+     * Get paginated data from a table
+     *
+     * @param string $table_name Table name (with or without $wpdb->prefix)
+     * @param int $page Current page number
+     * @param int $per_page Items per page
+     * @return array {
+     *     @type array $data List of rows as objects
+     *     @type int $total_items Total rows in table
+     *     @type int $total_pages Total pages
+     *     @type int $current_page Current page
+     *     @type int $per_page Items per page
+     * }
+     */
+    function get_data( $table_name, $page = 1, $per_page = 10 ) {
+        global $wpdb;
+
+        // Ensure table has prefix
+        if (strpos($table_name, $wpdb->prefix) !== 0) {
+            $table_name = $wpdb->prefix . $table_name;
+        }
+
+        $page = max(1, intval($page));
+        $per_page = max(1, intval($per_page));
+        $offset = ($page - 1) * $per_page;
+
+        // Fetch data
+        $data = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT * FROM {$table_name} ORDER BY id DESC LIMIT %d OFFSET %d",
+                $per_page,
+                $offset
+            )
+        );
+
+        // Total rows
+        $total_items = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name}");
+        $total_pages = ceil($total_items / $per_page);
+
+        return [
+            'data'         => $data,
+            'total_items'  => $total_items,
+            'total_pages'  => $total_pages,
+            'current_page' => $page,
+            'per_page'     => $per_page,
+        ];
+    }
 
 }
