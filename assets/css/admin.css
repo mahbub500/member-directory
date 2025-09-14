@@ -1,0 +1,46 @@
+/* Loader overlay */
+.md-loader-modal {
+    display: none; /* hide by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+/* Loader box */
+.md-loader-box {
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    min-width: 150px;
+}
+
+/* Spinning circle loader */
+.md-loader-circle {
+    width: 50px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 8px solid;
+    border-color: #000 #0000; /* half transparent */
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    to { transform: rotate(180deg); }
+}
+
+.md-loader-box p {
+    margin-top: 15px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #333;
+}

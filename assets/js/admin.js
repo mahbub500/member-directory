@@ -4,13 +4,17 @@
 (function($) {
     "use strict";
     function md_modal(show = true) {
+	    var $modal = $('.md-loader-modal');
+	    if (!$modal.length) return;
+
 	    if (show) {
-	        $('#md-loader-modal').fadeIn(200);
+	        $modal.show();  // show with fade-in effect
 	    } else {
-	        $('#md-loader-modal').fadeOut(200);
+	        $modal.hide(); // hide with fade-out effect
 	    }
 	}
 
+// md_modal();
      // Add Member via AJAX
     $(document).on('submit', '#md-add-member-form', function(e) {
         e.preventDefault();
@@ -28,7 +32,7 @@
         }
 
         // Optional: show loading
-        md_modal();
+        md_modal( true );
 
         $.ajax({
             url: MD_AJAX.ajaxurl,
@@ -67,7 +71,7 @@
         const memberId = $(this).data('id');
         if (!memberId) return;
 
-        md_modal();
+        md_modal( true );
 
         $.ajax({
             url: MD_AJAX.ajaxurl,
@@ -106,7 +110,7 @@
         }
 
         // Optional: show loading modal
-        md_modal();
+        md_modal( true );
 
         $.ajax({
             url: MD_AJAX.ajaxurl,

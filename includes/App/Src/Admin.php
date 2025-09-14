@@ -17,6 +17,22 @@ class Admin {
     }
 
     public function enqueue_assets() {
+
+        wp_enqueue_style(
+            'md-admin-css',
+            MD_ASSETS_URL . 'css/admin.css',
+            [],
+            filemtime(MD_PLUGIN_DIR . 'assets/css/admin.css')
+        );
+
+        // Plugin Admin JS using constant
+        wp_enqueue_script(
+            'md-admin',
+            MD_ASSETS_URL . 'js/admin.js', // Use MD_ASSETS_URL
+            [ 'jquery' ],
+            time(),
+            true
+        );
         // CSS
         wp_enqueue_style(
             'bootstrap',
@@ -29,15 +45,6 @@ class Admin {
             'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
             [],
             null,
-            true
-        );
-
-        // Plugin Admin JS using constant
-        wp_enqueue_script(
-            'md-admin',
-            MD_ASSETS_URL . 'js/admin.js', // Use MD_ASSETS_URL
-            [ 'jquery' ],
-            time(),
             true
         );
 
@@ -226,42 +233,14 @@ class Admin {
 }
 
     public function footer() {
-        ?>
-        <div id="md-loader-modal" style="
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        ">
-            <div style="
-                background: #fff;
-                padding: 30px 40px;
-                border-radius: 12px;
-                text-align: center;
-                box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-                min-width: 200px;
-            ">
-                <!-- Spinner -->
-                <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-
-                <!-- Text -->
-                <p style="
-                    margin-top: 15px;
-                    font-size: 1.2rem;
-                    font-weight: 500;
-                    color: #333;
-                ">Please wait...</p>
+        ?>        
+        <div class="md-loader-modal" style="display: none;">
+            <div class="md-loader-box">
+                <div class="md-loader-circle"></div>
+                <p>Please wait...</p>
             </div>
         </div>
+
         <?php
     }
 
