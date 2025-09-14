@@ -200,7 +200,7 @@ class Admin {
                                     </tr>
                                 </thead>
                                 <tbody id="md-members-list">
-                                    <?php foreach ($members as $m): ?>
+                                    <?php foreach ($members as $key => $m): ?>
                                         <tr class="md-member-row"
                                             data-id="<?php echo esc_attr($m->id); ?>"
                                             data-firstname="<?php echo esc_attr($m->first_name); ?>"
@@ -212,7 +212,7 @@ class Admin {
                                             data-profile="<?php echo esc_url($m->profile_image); ?>"
                                             data-cover="<?php echo esc_url($m->cover_image); ?>"
                                         >
-                                            <td><?php echo esc_html($m->id); ?></td>
+                                            <td><?php echo esc_html($key + 1); ?></td>
                                             <td>
                                                 <?php if (!empty($m->profile_image)): ?>
                                                     <img src="<?php echo esc_url($m->profile_image); ?>" alt="Profile" style="width:40px;height:40px;border-radius:50%;cursor:pointer;">
