@@ -1,0 +1,17 @@
+{
+    "authors": [
+        {
+            "name": "Mahbub",
+            "email": "mahbubmr500@gmail.com"
+        }
+    ],    
+    "autoload": {
+        "psr-4": {
+            "MemberDirectory\\": "includes/"
+        },
+        "files": [ "includes/functions.php" ]
+    },
+    "config": {
+      "autoloader-suffix": "MemberDirectoryM"
+    }
+}
