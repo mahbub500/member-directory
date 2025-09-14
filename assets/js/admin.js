@@ -266,12 +266,12 @@
             contentType: false,
             success: function(response) {
                 if (response.success) {
-                    alert(response.data.message);
+                    // alert(response.data.data); // your PHP success message
 
                     const member = response.data.member;
                     const row = $('.md-member-row[data-id="' + member.id + '"]');
 
-                    // Update table row values
+                    // Update row data attributes
                     row.data('firstname', member.first_name)
                        .data('lastname', member.last_name)
                        .data('email', member.email)
@@ -281,17 +281,36 @@
                        .data('profile', member.profile_image)
                        .data('cover', member.cover_image);
 
+                    // Update text fields
                     row.find('td:nth-child(4)').text(member.first_name + ' ' + member.last_name);
                     row.find('td:nth-child(5)').text(member.email);
                     row.find('td:nth-child(6)').text(member.address);
                     row.find('td:nth-child(7) span').css('background', member.favorite_color);
                     row.find('td:nth-child(8)').text(member.status);
 
+                    // Update profile image
+                    const profileCell = row.find('td:nth-child(2)');
+                    if (member.profile_image) {
+                        profileCell.html('<img src="' + member.profile_image + '" alt="Profile" style="width:40px;height:40px;border-radius:50%;cursor:pointer;">');
+                    } else {
+                        profileCell.html('<span class="text-muted">N/A</span>');
+                    }
+
+                    // Update cover image
+                    const coverCell = row.find('td:nth-child(3)');
+                    if (member.cover_image) {
+                        coverCell.html('<img src="' + member.cover_image + '" alt="Cover" style="width:60px;height:40px;object-fit:cover;border-radius:4px;cursor:pointer;">');
+                    } else {
+                        coverCell.html('<span class="text-muted">N/A</span>');
+                    }
+
+                    // Hide modal
                     $('#md-edit-modal').modal('hide');
                 } else {
                     alert(response.data.message || 'Update failed');
                 }
             }
+
         });
     });
 
