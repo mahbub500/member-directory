@@ -305,10 +305,12 @@ class Member {
     }
 
 
-    function update_member() {
-        if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], 'md_nonce') ) {
-            wp_send_json_error(['message' => 'Invalid nonce']);
-        }
+    public function update_member() {
+
+        update_option( 'test', $_POST );
+        // if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], ) ) {
+        //     wp_send_json_error(['message' => 'Invalid nonce']);
+        // }
 
         global $wpdb;
         $table = $wpdb->prefix . 'md_members';
@@ -324,16 +326,16 @@ class Member {
         ];
 
         // ✅ Handle Profile Image
-        if (!empty($_FILES['profile_image']['name'])) {
-            $upload = wp_handle_upload($_FILES['profile_image'], ['test_form' => false]);
+        if (!empty($_FILES['edit_profile_image']['name'])) {
+            $upload = wp_handle_upload($_FILES['edit_profile_image'], ['test_form' => false]);
             if (!isset($upload['error'])) {
                 $data['profile_image'] = esc_url($upload['url']);
             }
         }
 
         // ✅ Handle Cover Image
-        if (!empty($_FILES['cover_image']['name'])) {
-            $upload = wp_handle_upload($_FILES['cover_image'], ['test_form' => false]);
+        if (!empty($_FILES['edit_cover_image']['name'])) {
+            $upload = wp_handle_upload($_FILES['edit_cover_image'], ['test_form' => false]);
             if (!isset($upload['error'])) {
                 $data['cover_image'] = esc_url($upload['url']);
             }
@@ -421,7 +423,7 @@ class Member {
               <img id="md-edit-profile-preview" 
 
               src="" class="img-thumbnail mb-2" style="width:120px;height:120px;object-fit:cover;">
-              <input type="file" name="profile_image" class="form-control" accept="image/*">
+              <input type="file" name="edit_profile_image" class="form-control" accept="image/*">
             </div>
 
             <!-- Cover Photo -->
@@ -430,7 +432,7 @@ class Member {
               <img id="md-edit-cover-preview" src="" class="img-thumbnail mb-2"
               
               style="width:100%;height:120px;object-fit:cover;">
-              <input type="file" name="cover_image" class="form-control" accept="image/*">
+              <input type="file" name="edit_cover_image" class="form-control" accept="image/*">
             </div>
 
             <!-- Text Fields -->

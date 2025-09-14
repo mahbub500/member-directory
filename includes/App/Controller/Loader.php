@@ -10,6 +10,7 @@ class Loader {
         // Load Admin menus only in dashboard
         if ( is_admin() ) {
             new Admin();
+            new Member();
         }else{
             new Front();
         }
