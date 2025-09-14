@@ -19,14 +19,41 @@ class Admin {
     }
 
     public function enqueue_assets() {
-        wp_enqueue_style( 'bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' );
-        wp_enqueue_script( 'bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js', [], null, true );
-        wp_enqueue_script( 'md-admin', plugin_dir_url( __FILE__ ) . '../../assets/js/md-admin.js', [ 'jquery' ], time(), true );
-        wp_localize_script( 'md-admin', 'MD_AJAX', [
-            'ajaxurl' => admin_url( 'admin-ajax.php' ),
-            'nonce'   => wp_create_nonce( 'md_nonce' ),
-        ] );
+        // CSS
+        wp_enqueue_style(
+            'bootstrap',
+            'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css'
+        );
+
+        // JS
+        wp_enqueue_script(
+            'bootstrap',
+            'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
+            [],
+            null,
+            true
+        );
+
+        // Plugin Admin JS using constant
+        wp_enqueue_script(
+            'md-admin',
+            MD_ASSETS_URL . 'js/admin.js', // Use MD_ASSETS_URL
+            [ 'jquery' ],
+            time(),
+            true
+        );
+
+        // Localize AJAX
+        wp_localize_script(
+            'md-admin',
+            'MD_AJAX',
+            [
+                'ajaxurl' => admin_url( 'admin-ajax.php' ),
+                'nonce'   => wp_create_nonce( 'md_nonce' ),
+            ]
+        );
     }
+
 
     public function register_menus() {
         add_menu_page(
