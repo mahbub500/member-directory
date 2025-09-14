@@ -104,24 +104,52 @@ class Admin {
                 <div class="card shadow-sm h-100">
                     <div class="card-header bg-primary text-white">Add Member</div>
                     <div class="card-body">
-                        <form id="md-add-member-form" class="row g-3">
-                            <?php wp_nonce_field( 'md_nonce', 'security' ); ?>
+                        <form id="md-add-member-form" class="row g-3" enctype="multipart/form-data">
+                            <?php wp_nonce_field('md_nonce', 'security'); ?>
+
+                            <!-- First Name -->
                             <div class="col-12">
                                 <label class="form-label">First Name</label>
                                 <input type="text" name="first_name" class="form-control" required>
                             </div>
+
+                            <!-- Last Name -->
                             <div class="col-12">
                                 <label class="form-label">Last Name</label>
                                 <input type="text" name="last_name" class="form-control" required>
                             </div>
+
+                            <!-- Email -->
                             <div class="col-12">
                                 <label class="form-label">Email</label>
                                 <input type="email" name="email" class="form-control" required>
                             </div>
+
+                            <!-- Profile Image -->
+                            <div class="col-12">
+                                <label class="form-label">Profile Image</label>
+                                <input type="file" name="profile_image" class="form-control" accept="image/*">
+                            </div>
+
+                            <!-- Cover Image -->
+                            <div class="col-12">
+                                <label class="form-label">Cover Image</label>
+                                <input type="file" name="cover_image" class="form-control" accept="image/*">
+                            </div>
+
+                            <!-- Address -->
+                            <div class="col-12">
+                                <label class="form-label">Address</label>
+                                <textarea name="address" class="form-control" rows="2"></textarea>
+                            </div>
+
+                            <!-- Favorite Color -->
                             <div class="col-6">
                                 <label class="form-label">Favorite Color</label>
                                 <input type="color" name="favorite_color" class="form-control form-control-color" value="#000000">
                             </div>
+
+                            <!-- Status -->
                             <div class="col-6">
                                 <label class="form-label">Status</label>
                                 <select name="status" class="form-select">
@@ -129,14 +157,19 @@ class Admin {
                                     <option value="draft">Draft</option>
                                 </select>
                             </div>
+
+                            <!-- Submit Button -->
                             <div class="col-12">
                                 <button type="submit" class="btn btn-primary w-100">Add Member</button>
                             </div>
                         </form>
+
+                        <!-- Message Container -->
                         <div id="md-member-message" class="mt-3"></div>
                     </div>
                 </div>
             </div>
+
 
             <!-- Right column: Table -->
             <div class="col-lg-8">
