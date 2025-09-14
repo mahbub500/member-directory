@@ -418,15 +418,19 @@ class Member {
             <!-- Profile Image -->
             <div class="col-md-6 text-center">
               <label class="form-label d-block">Profile Image</label>
-              <img id="md-edit-profile-preview" src="" class="img-thumbnail mb-2" style="width:120px;height:120px;object-fit:cover;">
-              <input type="file" name="profile_image" class="form-control">
+              <img id="md-edit-profile-preview" 
+
+              src="" class="img-thumbnail mb-2" style="width:120px;height:120px;object-fit:cover;">
+              <input type="file" name="profile_image" class="form-control" accept="image/*">
             </div>
 
             <!-- Cover Photo -->
             <div class="col-md-6 text-center">
               <label class="form-label d-block">Cover Photo</label>
-              <img id="md-edit-cover-preview" src="" class="img-thumbnail mb-2" style="width:100%;height:120px;object-fit:cover;">
-              <input type="file" name="cover_image" class="form-control">
+              <img id="md-edit-cover-preview" src="" class="img-thumbnail mb-2"
+              
+              style="width:100%;height:120px;object-fit:cover;">
+              <input type="file" name="cover_image" class="form-control" accept="image/*">
             </div>
 
             <!-- Text Fields -->
