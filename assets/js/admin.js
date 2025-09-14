@@ -14,52 +14,68 @@
 	    }
 	}
 
-// md_modal();
      // Add Member via AJAX
-    $(document).on('submit', '#md-add-member-form', function(e) {
-        e.preventDefault();
+	$(document).on('submit', '#md-add-member-form', function(e) {
+	    e.preventDefault();
 
-        const firstName = $('input[name="first_name"]').val();
-		const lastName  = $('input[name="last_name"]').val();
-		const email     = $('input[name="email"]').val();
-		const color     = $('input[name="favorite_color"]').val();
-		const status    = $('select[name="status"]').val();
+	    const formData = new FormData(this); // includes files automatically
+	    formData.append('action', 'md_add_member');
+	    formData.append('nonce', MD_AJAX.nonce);
+
+	    // Optional: show loader
+	    md_modal(true);
+
+	    $.ajax({
+	        url: MD_AJAX.ajaxurl,
+	        type: 'POST',
+	        data: formData,
+	        contentType: false,
+	        processData: false,
+	        success: function(response) {
+	            md_modal(false);
+	            if (response.success) {
+	                alert(response.data);
+	                location.reload();
+	            } else {
+	                alert(response.data || 'Error adding member.');
+	            }
+	        },
+	        error: function() {
+	            md_modal(false);
+	            alert('Something went wrong!');
+	        }
+	    });
+	});
 
 
-        if (!firstName || !lastName || !email) {
-            alert('First name, last name, and email are required.');
-            return;
-        }
+    // Preview Profile Image
+    $('input[name="profile_image"]').on('change', function() {
+        const preview = $('#profile-image-preview');
+        preview.empty();
 
-        // Optional: show loading
-        md_modal( true );
-
-        $.ajax({
-            url: MD_AJAX.ajaxurl,
-            type: "POST",
-            data: {
-                action: 'md_add_member',
-                nonce: MD_AJAX.nonce,
-                first_name: firstName,
-                last_name: lastName,
-                email: email,
-                favorite_color: color,
-                status: status
-            },
-            success: function(response) {
-                if (response.success) {
-                    alert(response.data);
-                    location.reload();
-                } else {
-                    alert(response.data || 'Error adding member.');
-                }
-                md_modal(false);
-            },
-            error: function() {
-                alert('Something went wrong!');
-                md_modal(false);
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.html('<img src="' + e.target.result + '" style="width:100px; height:100px; object-fit:cover; border-radius:8px;" />');
             }
-        });
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Preview Cover Image
+    $('input[name="cover_image"]').on('change', function() {
+        const preview = $('#cover-image-preview');
+        preview.empty();
+
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.html('<img src="' + e.target.result + '" style="width:150px; height:80px; object-fit:cover; border-radius:8px;" />');
+            }
+            reader.readAsDataURL(file);
+        }
     });
 
     // Delete Member via AJAX

@@ -15,6 +15,7 @@ class Front {
     }
 
     public function head(){
-        // Utility::pri( 'Hello' );
+        // Utility::pri();
+        // md_handle_image_upload();
     }
 }

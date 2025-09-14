@@ -54,7 +54,7 @@ class Admin {
             'MD_AJAX',
             [
                 'ajaxurl' => admin_url( 'admin-ajax.php' ),
-                'nonce'   => wp_create_nonce( 'md_nonce' ),
+                'nonce'   => wp_create_nonce(),
             ]
         );
     }
@@ -129,12 +129,14 @@ class Admin {
                             <div class="col-12">
                                 <label class="form-label">Profile Image</label>
                                 <input type="file" name="profile_image" class="form-control" accept="image/*">
+                                <div id="profile-image-preview" style="margin-top:10px;"></div>
                             </div>
 
                             <!-- Cover Image -->
                             <div class="col-12">
                                 <label class="form-label">Cover Image</label>
                                 <input type="file" name="cover_image" class="form-control" accept="image/*">
+                                <div id="cover-image-preview" style="margin-top:10px;"></div>
                             </div>
 
                             <!-- Address -->
