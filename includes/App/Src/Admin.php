@@ -12,6 +12,7 @@ class Admin {
     public function __construct() {
         $this->action( 'admin_menu', [ $this, 'register_menus' ] );
         $this->action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
+        $this->action( 'admin_footer', [ $this, 'footer' ] );
 
     }
 
@@ -220,20 +221,51 @@ class Admin {
                 </div>
             </div>
         </div>
-
-        <!-- Loader modal -->
-    <div id="md-loader-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
-        background: rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
-        <div style="background:#fff; padding:20px 30px; border-radius:8px; text-align:center;">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <p style="margin-top:10px;">Please wait...</p>
-        </div>
-    </div>
     </div>
     <?php
 }
+
+    public function footer() {
+        ?>
+        <div id="md-loader-modal" style="
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        ">
+            <div style="
+                background: #fff;
+                padding: 30px 40px;
+                border-radius: 12px;
+                text-align: center;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+                min-width: 200px;
+            ">
+                <!-- Spinner -->
+                <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+
+                <!-- Text -->
+                <p style="
+                    margin-top: 15px;
+                    font-size: 1.2rem;
+                    font-weight: 500;
+                    color: #333;
+                ">Please wait...</p>
+            </div>
+        </div>
+        <?php
+    }
+
+
 
 
     

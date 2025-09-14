@@ -3,8 +3,7 @@
 
 (function($) {
     "use strict";
-
-    function runm_modal(show = true) {
+    function md_modal(show = true) {
 	    if (show) {
 	        $('#md-loader-modal').fadeIn(200);
 	    } else {
@@ -29,7 +28,7 @@
         }
 
         // Optional: show loading
-        runm_modal();
+        md_modal();
 
         $.ajax({
             url: MD_AJAX.ajaxurl,
@@ -50,11 +49,11 @@
                 } else {
                     alert(response.data || 'Error adding member.');
                 }
-                runm_modal(false);
+                md_modal(false);
             },
             error: function() {
                 alert('Something went wrong!');
-                runm_modal(false);
+                md_modal(false);
             }
         });
     });
@@ -68,7 +67,7 @@
         const memberId = $(this).data('id');
         if (!memberId) return;
 
-        runm_modal();
+        md_modal();
 
         $.ajax({
             url: MD_AJAX.ajaxurl,
@@ -85,11 +84,11 @@
                 } else {
                     alert(response.data || 'Error deleting member.');
                 }
-                runm_modal(false);
+                md_modal(false);
             },
             error: function() {
                 alert('Something went wrong!');
-                runm_modal(false);
+                md_modal(false);
             }
         });
     });
@@ -107,7 +106,7 @@
         }
 
         // Optional: show loading modal
-        runm_modal();
+        md_modal();
 
         $.ajax({
             url: MD_AJAX.ajaxurl,
@@ -125,11 +124,11 @@
                 } else {
                     alert(response.data || 'An error occurred.');
                 }
-                runm_modal(false);
+                md_modal(false);
             },
             error: function() {
                 alert('Something went wrong!');
-                runm_modal(false);
+                md_modal(false);
             }
         });
     });
