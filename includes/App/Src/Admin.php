@@ -65,27 +65,27 @@ class Admin {
             __( 'Member Directory', 'member-directory' ),
             __( 'Member Directory', 'member-directory' ),
             'manage_options',
-            'md-members',
+            'members',
             [ $this, 'members_page' ],
             'dashicons-groups',
             26
         );
 
         add_submenu_page(
-            'md-members',
+            'members',
             __( 'Members', 'member-directory' ),
             __( 'Members', 'member-directory' ),
             'manage_options',
-            'md-members',
+            'members',
             [ $this, 'members_page' ]
         );
 
         add_submenu_page(
-            'md-members',
+            'members',
             __( 'Teams', 'member-directory' ),
             __( 'Teams', 'member-directory' ),
             'manage_options',
-            'md-teams',
+            'teams',
             [ $this, 'teams_page' ]
         );
     }
@@ -95,11 +95,13 @@ class Admin {
     global $wpdb;
     $members = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}md_members");
     ?>
+
     <div class="container-fluid p-4">
         <h1 class="mb-4"><?php esc_html_e('Members', 'member-directory'); ?></h1>
 
         <div class="row g-4">
-            <!-- Left column: Form -->
+
+            <!-- Left Column: Add Member Form -->
             <div class="col-lg-4">
                 <div class="card shadow-sm h-100">
                     <div class="card-header bg-primary text-white">Add Member</div>
@@ -172,8 +174,7 @@ class Admin {
                 </div>
             </div>
 
-
-            <!-- Right column: Table -->
+            <!-- Right Column: All Members Table -->
             <div class="col-lg-8">
                 <div class="card shadow-sm h-100">
                     <div class="card-header bg-dark text-white">All Members</div>
@@ -181,17 +182,60 @@ class Admin {
                         <table class="table table-striped table-hover align-middle">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>ID</th><th>Name</th><th>Email</th><th>Color</th><th>Status</th>
+                                    <th>ID</th>
+                                    <th>Profile</th>
+                                    <th>Cover</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Address</th>
+                                    <th>Color</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="md-members-list">
-                                <?php foreach( $members as $m ): ?>
+                                <?php foreach ($members as $m): ?>
                                     <tr>
                                         <td><?php echo esc_html($m->id); ?></td>
+
+                                        <!-- Profile Image -->
+                                        <td>
+                                            <?php if (!empty($m->profile_image)): ?>
+                                                <img src="<?php echo esc_url($m->profile_image); ?>" alt="Profile" style="width:40px;height:40px;border-radius:50%;">
+                                            <?php else: ?>
+                                                <span class="text-muted">N/A</span>
+                                            <?php endif; ?>
+                                        </td>
+
+                                        <!-- Cover Image -->
+                                        <td>
+                                            <?php if (!empty($m->cover_image)): ?>
+                                                <img src="<?php echo esc_url($m->cover_image); ?>" alt="Cover" style="width:60px;height:40px;object-fit:cover;border-radius:4px;">
+                                            <?php else: ?>
+                                                <span class="text-muted">N/A</span>
+                                            <?php endif; ?>
+                                        </td>
+
+                                        <!-- Name & Email -->
                                         <td><?php echo esc_html($m->first_name . ' ' . $m->last_name); ?></td>
                                         <td><?php echo esc_html($m->email); ?></td>
-                                        <td><span style="background:<?php echo esc_attr($m->favorite_color); ?>;padding:5px 15px;display:inline-block;"></span></td>
+
+                                        <!-- Address -->
+                                        <td><?php echo esc_html($m->address ?? ''); ?></td>
+
+                                        <!-- Favorite Color -->
+                                        <td>
+                                            <span style="background:<?php echo esc_attr($m->favorite_color); ?>;padding:5px 15px;display:inline-block;border-radius:4px;"></span>
+                                        </td>
+
+                                        <!-- Status -->
                                         <td><?php echo esc_html($m->status); ?></td>
+
+                                        <!-- Action Buttons -->
+                                        <td>
+                                            <button class="btn btn-sm btn-primary md-edit-member" data-id="<?php echo esc_attr($m->id); ?>">Edit</button>
+                                            <button class="btn btn-sm btn-danger md-delete-member" data-id="<?php echo esc_attr($m->id); ?>">Delete</button>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -199,10 +243,13 @@ class Admin {
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+
+        </div> <!-- .row -->
+    </div> <!-- .container-fluid -->
+
     <?php
 }
+
 
 
     /** ================= TEAMS ================= */
