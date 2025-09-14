@@ -2,7 +2,7 @@
 /**
  * All helpers functions
  */
-namespace CloudServerManagement\Helper;
+namespace MemberDirectory\Helper;
 
 /**
  * if accessed directly, exit.

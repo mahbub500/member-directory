@@ -1,5 +1,5 @@
 <?php
-namespace MemberDirectory\App\Traits;
+namespace MemberDirectory\Traits;
 
 defined( 'ABSPATH' ) || exit;
 

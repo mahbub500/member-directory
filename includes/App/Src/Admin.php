@@ -1,6 +1,6 @@
 <?php
 namespace MemberDirectory\App\Src;
-use MemberDirectory\App\Traits\Hook;
+use MemberDirectory\Traits\Hook;
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }

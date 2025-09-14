@@ -1,5 +1,5 @@
 <?php
-namespace MemberDirectory\App\Traits;
+namespace MemberDirectory\Traits;
 use MemberDirectory\Traits\Rest;
 
 trait Token {
