@@ -67,36 +67,21 @@ trait Hook {
 	}
 
 	/**
-	 * Registers an AJAX action for logged-in users.
+	 * Registers an AJAX action for both logged-in and non-logged-in users.
 	 *
-	 * @param string   $action The AJAX action.
+	 * @param string   $action   The AJAX action name.
 	 * @param callable $callback The callback function.
 	 */
-	public function ajax_priv( $action, $callback ) {
-		if ( is_callable( $callback ) ) {
-			add_action( 'wp_ajax_' . $action, $callback );
-		}
+	public function register_ajax( $action, $callback ) {
+	    if ( ! is_callable( $callback ) ) {
+	        return;
+	    }
+
+	    // For logged-in users
+	    add_action( 'wp_ajax_' . $action, $callback );
+
+	    // For non-logged-in users
+	    add_action( 'wp_ajax_nopriv_' . $action, $callback );
 	}
 
-	/**
-	 * Registers an AJAX action for non-logged-in users.
-	 *
-	 * @param string   $action The AJAX action.
-	 * @param callable $callback The callback function.
-	 */
-	public function ajax_nopriv( $action, $callback ) {
-		if ( is_callable( $callback ) ) {
-			add_action( 'wp_ajax_nopriv_' . $action, $callback );
-		}
-	}
-
-	/**
-	 * Registers both logged-in and non-logged-in AJAX actions.
-	 */
-	public function ajax( $action, $callback ) {
-		if ( is_callable( $callback ) ) {
-			$this->ajax_priv( $action, $callback );
-			$this->ajax_nopriv( $action, $callback );
-		}
-	}
 }
