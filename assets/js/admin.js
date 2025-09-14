@@ -214,4 +214,69 @@
         });
     });
 
+    $(document).on('click', '.md-edit-member', function() {
+    	const row = $(this).closest('.md-member-row');
+
+	    $('#md-edit-id').val(row.data('id'));
+	    $('#md-edit-firstname').val(row.data('firstname'));
+	    $('#md-edit-lastname').val(row.data('lastname'));
+	    $('#md-edit-email').val(row.data('email'));
+	    $('#md-edit-address').val(row.data('address'));
+	    $('#md-edit-color').val(row.data('color'));
+	    $('#md-edit-status').val(row.data('status'));
+
+	    // Load profile & cover images from data attributes
+	    $('#md-edit-profile-preview').attr('src', row.data('profile'));
+	    $('#md-edit-cover-preview').attr('src', row.data('cover'));
+
+	    $('#md-edit-modal').modal('show');
+	});
+
+    $(document).on('submit', '#md-edit-member-form', function(e) {
+    e.preventDefault();
+
+    let formData = new FormData(this);
+    formData.append('action', 'md_update_member');
+    formData.append('nonce', MD_AJAX.nonce);
+
+    $.ajax({
+        url: MD_AJAX.ajaxurl,
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.success) {
+                alert(response.data.message);
+
+                const member = response.data.member;
+                const row = $('.md-member-row[data-id="' + member.id + '"]');
+
+                // Update table row values
+                row.data('firstname', member.first_name)
+                   .data('lastname', member.last_name)
+                   .data('email', member.email)
+                   .data('address', member.address)
+                   .data('color', member.favorite_color)
+                   .data('status', member.status)
+                   .data('profile', member.profile_image)
+                   .data('cover', member.cover_image);
+
+                row.find('td:nth-child(4)').text(member.first_name + ' ' + member.last_name);
+                row.find('td:nth-child(5)').text(member.email);
+                row.find('td:nth-child(6)').text(member.address);
+                row.find('td:nth-child(7) span').css('background', member.favorite_color);
+                row.find('td:nth-child(8)').text(member.status);
+
+                $('#md-edit-modal').modal('hide');
+            } else {
+                alert(response.data.message || 'Update failed');
+            }
+        }
+    });
+});
+
+
+
+
 })(jQuery);

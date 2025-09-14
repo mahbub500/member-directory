@@ -2,7 +2,7 @@
 namespace MemberDirectory\App\Controller;
 use MemberDirectory\App\Src\Admin;
 use MemberDirectory\App\Src\Front;
-use MemberDirectory\App\Src\Ajax;
+use MemberDirectory\App\Src\Member;
 
 class Loader {
 
@@ -13,6 +13,5 @@ class Loader {
         }else{
             new Front();
         }
-            new Ajax();
     }
 }
