@@ -13,9 +13,6 @@ class Admin {
         $this->action( 'admin_menu', [ $this, 'register_menus' ] );
         $this->action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 
-        // AJAX Handlers
-        $this->action( 'wp_ajax_md_add_member', [ $this, 'ajax_add_member' ] );
-        $this->action( 'wp_ajax_md_add_team', [ $this, 'ajax_add_team' ] );
     }
 
     public function enqueue_assets() {
@@ -223,6 +220,17 @@ class Admin {
                 </div>
             </div>
         </div>
+
+        <!-- Loader modal -->
+    <div id="md-loader-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+        background: rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+        <div style="background:#fff; padding:20px 30px; border-radius:8px; text-align:center;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p style="margin-top:10px;">Please wait...</p>
+        </div>
+    </div>
     </div>
     <?php
 }

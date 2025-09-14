@@ -13,7 +13,7 @@ class Ajax {
     public function __construct() {
         $this->register_ajax( 'md_add_member', [ $this, 'add_member' ] );
 
-        // $this->register_ajax( 'md_add_member', [ $this, 'ajax_add_member' ] );
+        $this->register_ajax( 'md_add_team', [ $this, 'add_team' ] );
     }
 
     /** ================= AJAX ================= */
@@ -33,8 +33,8 @@ class Ajax {
         wp_send_json_success([ 'message' => 'Member added successfully.' ]);
     }
 
-    public function ajax_add_team() {
-        check_ajax_referer( 'md_nonce', 'security' );
+    public function add_team() {
+        // check_ajax_referer( 'md_nonce', 'security' );
         global $wpdb;
 
         $table = $wpdb->prefix . 'md_teams';

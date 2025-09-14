@@ -1,62 +1,135 @@
+
+
+
 (function($) {
     "use strict";
 
-    // Example: Handle form submission via AJAX
-    $('#md-add-member-form').on('submit', function(e) {
+    function runm_modal(show = true) {
+	    if (show) {
+	        $('#md-loader-modal').fadeIn(200);
+	    } else {
+	        $('#md-loader-modal').fadeOut(200);
+	    }
+	}
+
+     // Add Member via AJAX
+    $(document).on('submit', '#md-add-member-form', function(e) {
         e.preventDefault();
 
-        var data = {
-            action: 'md_add_member',
-            nonce: MD_AJAX.nonce,
-            first_name: $('#first_name').val(),
-            last_name: $('#last_name').val(),
-            email: $('#email').val(),
-            favorite_color: $('#favorite_color').val(),
-            status: $('#status').val(),
-        };
+        const firstName = $('input[name="first_name"]').val();
+		const lastName  = $('input[name="last_name"]').val();
+		const email     = $('input[name="email"]').val();
+		const color     = $('input[name="favorite_color"]').val();
+		const status    = $('select[name="status"]').val();
 
-        $.post(MD_AJAX.ajaxurl, data, function(response) {
-            alert(response.data); // Display response
-            location.reload(); // Reload page to see new member
+
+        if (!firstName || !lastName || !email) {
+            alert('First name, last name, and email are required.');
+            return;
+        }
+
+        // Optional: show loading
+        runm_modal();
+
+        $.ajax({
+            url: MD_AJAX.ajaxurl,
+            type: "POST",
+            data: {
+                action: 'md_add_member',
+                nonce: MD_AJAX.nonce,
+                first_name: firstName,
+                last_name: lastName,
+                email: email,
+                favorite_color: color,
+                status: status
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert(response.data);
+                    location.reload();
+                } else {
+                    alert(response.data || 'Error adding member.');
+                }
+                runm_modal(false);
+            },
+            error: function() {
+                alert('Something went wrong!');
+                runm_modal(false);
+            }
         });
     });
 
-    // Example: Delete member
-    $('.md-delete-member').on('click', function(e) {
+    // Delete Member via AJAX
+    $(document).on('click', '.md-delete-member', function(e) {
         e.preventDefault();
+
         if (!confirm('Are you sure you want to delete this member?')) return;
 
-        var member_id = $(this).data('id');
+        const memberId = $(this).data('id');
+        if (!memberId) return;
 
-        $.post(MD_AJAX.ajaxurl, {
-            action: 'md_delete_member',
-            nonce: MD_AJAX.nonce,
-            member_id: member_id
-        }, function(response) {
-            alert(response.data);
-            location.reload();
+        runm_modal();
+
+        $.ajax({
+            url: MD_AJAX.ajaxurl,
+            type: "POST",
+            data: {
+                action: 'md_delete_member',
+                nonce: MD_AJAX.nonce,
+                member_id: memberId
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert(response.data);
+                    location.reload();
+                } else {
+                    alert(response.data || 'Error deleting member.');
+                }
+                runm_modal(false);
+            },
+            error: function() {
+                alert('Something went wrong!');
+                runm_modal(false);
+            }
         });
     });
 
-    // Handle Add Team Form Submission
-    $('#md-add-team-form').on('submit', function(e) {
-        e.preventDefault(); // Prevent default form submit
+    // Delegated event for Add Team button / form submission
+    $(document).on('submit', '#md-add-team-form', function(e) {
+        e.preventDefault();
 
-        // Collect form data
-        var data = {
-            action: 'md_add_team',     // AJAX action
-            nonce: MD_AJAX.nonce,      // Security nonce
-            name: $('#team_name').val(),
-            short_description: $('#team_description').val()
-        };
+        const teamName = $('#team_name').val();
+        const teamDesc = $('#team_description').val();
 
-        // Send AJAX request
-        $.post(MD_AJAX.ajaxurl, data, function(response) {
-            if(response.success){
-                alert(response.data); // Success message
-                location.reload();     // Reload to show new team
-            } else {
-                alert('Error: ' + response.data);
+        if (!teamName) {
+            alert('Team name is required.');
+            return;
+        }
+
+        // Optional: show loading modal
+        runm_modal();
+
+        $.ajax({
+            url: MD_AJAX.ajaxurl,
+            type: "POST",
+            data: {
+                nonce: MD_AJAX.nonce,
+                action: 'md_add_team',
+                name: teamName,
+                short_description: teamDesc
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert(response.data); // Success message
+                    location.reload();     // Reload to show new team
+                } else {
+                    alert(response.data || 'An error occurred.');
+                }
+                runm_modal(false);
+            },
+            error: function() {
+                alert('Something went wrong!');
+                runm_modal(false);
             }
         });
     });
