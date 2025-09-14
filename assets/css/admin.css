@@ -1,3 +1,4 @@
+
 /* Loader overlay */
 .md-loader-modal {
     display: none; /* hide by default */
@@ -43,4 +44,8 @@
     font-size: 1.2rem;
     font-weight: 500;
     color: #333;
+}
+
+#md-all-memebers .card {
+    max-width: none !important;
 }

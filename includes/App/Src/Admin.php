@@ -96,7 +96,7 @@ class Admin {
     $members = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}md_members");
     ?>
 
-    <div class="container-fluid p-4">
+    <div class="container-fluid p-4" id="md-all-memebers">
         <h1 class="mb-4"><?php esc_html_e('Members', 'member-directory'); ?></h1>
 
         <div class="row g-4">
