@@ -152,41 +152,51 @@
 	    $('#md-image-modal').modal('show');
 	});
 
+    $(document).on('click', '.md-delete-member', function(e){
+        e.preventDefault();
+        const row = $(this).closest('tr');
+        const memberId = $(this).data('id');
 
+        // Store the member ID in hidden input
+        $('#md-delete-member-id').val(memberId);
+
+        // Show the modal
+        $('#md-delete-member-modal').modal('show');
+    });
 
 
     // Delete Member via AJAX
-    $(document).on('click', '.md-delete-member', function(e) {
-        e.preventDefault();
-
-        if (!confirm('Are you sure you want to delete this member?')) return;
-
-        const memberId = $(this).data('id');
-        console.log( memberId );
+    $(document).on('click', '#md-confirm-delete-member', function(){
+        const memberId = $('#md-delete-member-id').val();
         if (!memberId) return;
 
-        md_modal( true );
+        md_modal(true);
 
         $.ajax({
             url: MD_AJAX.ajaxurl,
-            type: "POST",
+            type: 'POST',
             data: {
                 action: 'md_delete_member',
                 nonce: MD_AJAX.nonce,
                 member_id: memberId
             },
-            success: function(response) {
-                if (response.success) {
+            success: function(response){
+                md_modal(false);
+                if(response.success){
+                    // Remove row from table
                     $('.md-member-row[data-id="' + memberId + '"]').remove();
-                } 
-                md_modal(false);
+                    $('#md-delete-member-modal').modal('hide');
+                } else {
+                    alert(response.data || 'Failed to delete member.');
+                }
             },
-            error: function() {
-                alert('Something went wrong!');
+            error: function(){
                 md_modal(false);
+                alert('Something went wrong!');
             }
         });
-    });    
+    });
+    
 
     $(document).on('click', '.md-edit-member', function() {
     	const row = $(this).closest('.md-member-row');

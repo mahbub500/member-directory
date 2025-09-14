@@ -205,8 +205,6 @@ class Team {
           </div>
         </div>
 
-        <!-- Delete Modal -->
-
         <!-- Delete Team Modal -->
         <div class="modal fade" id="md-delete-team-modal" tabindex="-1" aria-labelledby="mdDeleteTeamModalLabel" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered">
