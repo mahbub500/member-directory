@@ -1,18 +1,17 @@
 
-
-
 (function($) {
-    "use strict";
-    function md_modal(show = true) {
-	    var $modal = $('.md-loader-modal');
-	    if (!$modal.length) return;
+    "use strict";    
 
-	    if (show) {
-	        $modal.show();  // show with fade-in effect
-	    } else {
-	        $modal.hide(); // hide with fade-out effect
-	    }
-	}
+    function md_modal(show = true) {
+        var $modal = $('.md-loader-modal');
+        if (!$modal.length) return;
+
+        if (show) {
+            $modal.show();  // show with fade-in effect
+        } else {
+            $modal.hide(); // hide with fade-out effect
+        }
+    }
 
      // Add Member via AJAX
 	$(document).on('submit', '#md-add-member-form', function(e) {
@@ -187,47 +186,7 @@
                 md_modal(false);
             }
         });
-    });
-
-    // Delegated event for Add Team button / form submission
-    $(document).on('submit', '#md-add-team-form', function(e) {
-        e.preventDefault();
-
-        const teamName = $('#team_name').val();
-        const teamDesc = $('#team_description').val();
-
-        if (!teamName) {
-            alert('Team name is required.');
-            return;
-        }
-
-        // Optional: show loading modal
-        md_modal( true );
-
-        $.ajax({
-            url: MD_AJAX.ajaxurl,
-            type: "POST",
-            data: {
-                nonce: MD_AJAX.nonce,
-                action: 'md_add_team',
-                name: teamName,
-                short_description: teamDesc
-            },
-            success: function(response) {
-                if (response.success) {
-                    alert(response.data); // Success message
-                    location.reload();     // Reload to show new team
-                } else {
-                    alert(response.data || 'An error occurred.');
-                }
-                md_modal(false);
-            },
-            error: function() {
-                alert('Something went wrong!');
-                md_modal(false);
-            }
-        });
-    });
+    });    
 
     $(document).on('click', '.md-edit-member', function() {
     	const row = $(this).closest('.md-member-row');
@@ -316,5 +275,56 @@
 
 
 
+/*JQuery code for Team member*/
 
+    $(document).on('submit', '#md-add-team-form', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this); // automatically includes 'name' and 'short_description'
+        formData.append('action', 'md_add_team');
+        formData.append('nonce', MD_AJAX.nonce);
+
+        // Debug: check formData
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
+
+        // Optional loader
+        md_modal(true);
+
+        $.ajax({
+            url: MD_AJAX.ajaxurl,
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                md_modal(false);
+
+                if (response.success) {
+                    // alert(response.data.message || 'Team added successfully');
+
+                    // Append new team to table dynamically
+                    const team = response.data.team;
+                    $('#md-teams-list').append(`
+                        <tr>
+                            <td>${team.id}</td>
+                            <td>${team.name}</td>
+                            <td>${team.short_description}</td>
+                        </tr>
+                    `);
+
+                    // Reset form
+                    $('#md-add-team-form')[0].reset();
+                } else {
+                    alert(response.data.message || 'Error adding team.');
+                }
+            },
+            error: function(err) {
+                md_modal(false);
+                console.error(err);
+                alert('Something went wrong!');
+            }
+        });
+    });
 })(jQuery);

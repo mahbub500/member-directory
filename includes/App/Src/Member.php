@@ -289,28 +289,11 @@ class Member {
         }
     }
 
-
-
-    public function add_team() {
-        // check_ajax_referer( 'md_nonce', 'security' );
-        global $wpdb;
-
-        $table = $wpdb->prefix . 'md_teams';
-        $wpdb->insert( $table, [
-            'name'              => sanitize_text_field($_POST['name']),
-            'short_description' => sanitize_textarea_field($_POST['short_description']),
-        ] );
-
-        wp_send_json_success([ 'message' => 'Team added successfully.' ]);
-    }
-
-
     public function update_member() {
 
-        update_option( 'test', $_POST );
-        // if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], ) ) {
-        //     wp_send_json_error(['message' => 'Invalid nonce']);
-        // }
+        if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], ) ) {
+            wp_send_json_error(['message' => 'Invalid nonce']);
+        }
 
         global $wpdb;
         $table = $wpdb->prefix . 'md_members';
