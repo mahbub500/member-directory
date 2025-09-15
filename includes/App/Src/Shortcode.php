@@ -74,27 +74,48 @@ class Shortcode {
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0"><?php echo esc_html__( 'Your Team:', 'member-directory' ) . ' ' . esc_html( $team_name ); ?></h4>
                 </div>
-                <div class="card-body p-0">
-                    <ul class="list-group list-group-flush">
+                <div class="card-body">
+                    
+                    <!-- Team Members -->
+                    <h5><?php echo esc_html__( 'Team Members', 'member-directory' ); ?></h5>
+                    <ul class="list-group list-group-flush mb-3">
                         <?php foreach ( $members as $m ): 
-                            $profile_img = get_user_profile_image( $m->ID ) ?: 'https://via.placeholder.com/40';
-                            $full_name   = get_user_full_name( $m->ID );
+                            
                         ?>
                             <li class="list-group-item d-flex align-items-center">
-                                <img src="<?php echo esc_url( $profile_img ); ?>" 
-                                     alt="<?php echo esc_attr( $full_name ); ?>" 
+                                <img src="<?php echo get_user_profile_image( $m->ID ); ?>" 
+                                     alt="<?php echo get_user_full_name( $m->ID ); ?>" 
                                      class="rounded-circle me-3" 
                                      width="50" height="50">
-                                <span class="fw-medium"><?php echo esc_html( $full_name ); ?></span>
+                                <div>
+                                    <span class="fw-medium"><?php echo get_user_full_name( $m->ID ); ?></span> 
+                                    <br>
+                                        
+                                    <small class="text-muted"><?php echo get_user_email( $m->ID ); ?></small>
+                                </div>
                             </li>
                         <?php endforeach; ?>
                     </ul>
+
+                    <!-- Team Chat -->
+                    <h5><?php echo esc_html__( 'Team Chat', 'member-directory' ); ?></h5>
+                    <div class="card border shadow-sm mb-3">
+                        <div id="chat-messages" class="p-3" style="height:250px; overflow-y:auto; background:#f8f9fa;">
+                            <!-- Messages will load here via AJAX -->
+                        </div>
+                        <form id="team-chat-form" class="d-flex border-top p-2">
+                            <input type="text" id="chat-message-input" class="form-control me-2" placeholder="<?php esc_attr_e('Type your message…','member-directory'); ?>" required>
+                            <button type="submit" class="btn btn-success"><?php esc_html_e('Send','member-directory'); ?></button>
+                        </form>
+                    </div>
+
                 </div>
             </div>
         </div>
         <?php
         return ob_get_clean();
     }
+
 
 
 }

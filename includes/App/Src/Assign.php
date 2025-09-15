@@ -144,8 +144,7 @@ class Assign {
         /**
          * Pagination data loading (already in your code)
          */
-        $page    = isset($_GET['page_num']) ? intval($_GET['page_num']) : 1;
-        $members = get_data('md_members', $page, 10);
+        
         $page      = isset($_GET['page_num']) ? intval($_GET['page_num']) : 1;
         $per_page  = 10;
         $offset    = ($page - 1) * $per_page;
@@ -191,9 +190,9 @@ class Assign {
               <div class="card shadow-sm h-100">
                 <div class="card-header bg-success text-white">Teams</div>
                 <div class="card-body" style="max-height: 600px; overflow-y: auto;">
-                  <?php foreach ($teams['data'] as $t): ?>
+                  <?php foreach ( $teams['data'] as $t ): ?>
                     <div class="team-container mb-3 p-2 border rounded" data-team-id="<?php echo esc_attr($t->id); ?>">
-                      <h5><?php echo esc_html($t->name); ?></h5>
+                      <h5><?php echo esc_html( $t->name ); ?></h5>
 
                       <!-- Team Members -->
                       <ul class="team-members list-group mb-2" style="max-height: 200px; overflow-y: auto;">

@@ -83,7 +83,7 @@ if ( ! function_exists( 'get_data' ) ) {
         global $wpdb;
 
         // Ensure table has prefix
-        if (strpos($table_name, $wpdb->prefix) !== 0) {
+        if ( strpos( $table_name, $wpdb->prefix ) !== 0) {
             $table_name = $wpdb->prefix . $table_name;
         }
 
@@ -165,8 +165,6 @@ if ( ! function_exists( 'get_user_full_name' ) ) {
 
         return trim( $first_name . ' ' . $last_name );
     }
-
-
 }
 
 if ( ! function_exists( 'get_all_ids' ) ) {
@@ -231,3 +229,18 @@ if ( ! function_exists( 'get_user_profile_image' ) ) {
     }
 }
 
+if ( ! function_exists( 'get_user_email' ) ) {
+    /**
+     * Get user email by user ID
+     *
+     * @param int $user_id The ID of the user
+     * @return string|false Returns the email if user exists, false otherwise
+     */
+    function get_user_email( $user_id ) {
+        $user = get_userdata( $user_id );
+        if ( $user ) {
+            return $user->user_email;
+        }
+        return false;
+    }
+}
