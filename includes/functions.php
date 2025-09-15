@@ -217,7 +217,7 @@ if ( ! function_exists( 'md_get_user_profile_image' ) ) {
         }
 
         // Fallback to local profile image
-        $local_image = get_user_meta( $user_id, 'md_profile_image', true );
+        $local_image = get_user_meta( $user_id, 'profile_image', true );
 
         if ( $local_image ) {
             return esc_url( $local_image );
