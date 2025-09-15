@@ -244,3 +244,26 @@ if ( ! function_exists( 'get_user_email' ) ) {
         return false;
     }
 }
+
+if ( ! function_exists( 'get_user_profile_url' ) ) {
+    /**
+     * Generate a user profile URL based on first and last name.
+     *
+     * @param int $user_id WordPress user ID.
+     * @return string URL to the user's profile page.
+     */
+    function get_user_profile_url( $user_id ) {
+        $user = get_userdata( $user_id );
+
+        if ( ! $user ) {
+            return home_url(); // fallback to home if user not found
+        }
+
+        // Sanitize first and last name to create URL slug
+        $first_name = sanitize_title( $user->first_name );
+        $last_name  = sanitize_title( $user->last_name );
+
+        // Construct URL
+        return home_url( "/{$first_name}_{$last_name}/" );
+    }
+}

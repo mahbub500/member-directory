@@ -80,20 +80,21 @@ class Shortcode {
                     <h5><?php echo esc_html__( 'Team Members', 'member-directory' ); ?></h5>
                     <ul class="list-group list-group-flush mb-3">
                         <?php foreach ( $members as $m ): 
-                            
+                                                    
                         ?>
                             <li class="list-group-item d-flex align-items-center">
-                                <img src="<?php echo get_user_profile_image( $m->ID ); ?>" 
-                                     alt="<?php echo get_user_full_name( $m->ID ); ?>" 
+                            <a href="<?php echo esc_url( get_user_profile_url( $m->ID ) ); ?>" class="d-flex align-items-center text-decoration-none w-100">
+                                <img src="<?php echo esc_url( get_user_profile_image( $m->ID ) ); ?>" 
+                                     alt="<?php echo esc_attr( get_user_full_name( $m->ID ) ); ?>" 
                                      class="rounded-circle me-3" 
                                      width="50" height="50">
                                 <div>
-                                    <span class="fw-medium"><?php echo get_user_full_name( $m->ID ); ?></span> 
+                                    <span class="fw-medium"><?php echo esc_html( get_user_full_name( $m->ID ) ); ?></span> 
                                     <br>
-                                        
-                                    <small class="text-muted"><?php echo get_user_email( $m->ID ); ?></small>
+                                    <small class="text-muted"><?php echo esc_html( get_user_email( $m->ID ) ); ?></small>
                                 </div>
-                            </li>
+                            </a>
+                        </li>
                         <?php endforeach; ?>
                     </ul>
 
