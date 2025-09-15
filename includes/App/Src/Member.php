@@ -153,7 +153,7 @@ class Member {
     </thead>
     <tbody id="md-members-list">
         <?php foreach ($all_users as $user): 
-            $profile_image = md_get_user_profile_image( $user->id );
+            $profile_image = get_user_profile_image( $user->id );
             $cover_image   = get_user_meta($user->ID, 'cover_image', true) ?: 'https://via.placeholder.com/60x40';
             $address       = get_user_meta($user->ID, 'address', true);
             $color         = get_user_meta($user->ID, 'favorite_color', true);

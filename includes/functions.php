@@ -138,31 +138,34 @@ if ( ! function_exists( 'get_members_by_team' ) ) {
 
         $member_ids = array_map('intval', explode(',', $member_ids_str));
 
-        // Fetch member details
-        $placeholders = implode(',', array_fill(0, count($member_ids), '%d'));
-        $query = $wpdb->prepare(
-            "SELECT * FROM $members_table WHERE id IN ($placeholders)",
-            ...$member_ids
-        );
+        $members = [];
+        foreach ( $member_ids as $user_id ) {
+            $user = get_userdata( $user_id );
+            if ( $user ) {
+                $members[] = $user;
+            }
+        }
 
-        return $wpdb->get_results($query);
+        return $members;
     }
 }
 
-if ( ! function_exists( 'get_member_full_name' ) ) {
+if ( ! function_exists( 'get_user_full_name' ) ) {
     /**
      * Get member full name by ID
      */
-    function get_member_full_name( $member_id ) {
-        global $wpdb;
-        $table = $wpdb->prefix . 'md_members';
+    function get_user_full_name( $user_id ) {
+        $user = get_userdata( $user_id );
+        if ( ! $user ) {
+            return '';
+        }
 
-        $member = $wpdb->get_row(
-            $wpdb->prepare("SELECT first_name, last_name FROM $table WHERE id = %d", $member_id)
-        );
+        $first_name = $user->first_name;
+        $last_name  = $user->last_name;
 
-        return $member ? trim($member->first_name . ' ' . $member->last_name) : null;
+        return trim( $first_name . ' ' . $last_name );
     }
+
 
 }
 
@@ -188,7 +191,7 @@ if ( ! function_exists( 'get_all_ids' ) ) {
     }
 }
 
-if ( ! function_exists( 'md_get_user_profile_image' ) ) {
+if ( ! function_exists( 'get_user_profile_image' ) ) {
     /**
      * Get user profile image
      *
@@ -196,7 +199,7 @@ if ( ! function_exists( 'md_get_user_profile_image' ) ) {
      * @param int $size Image size in pixels (default 80).
      * @return string URL of profile image.
      */
-    function md_get_user_profile_image( $user_id, $size = 80 ) {
+    function get_user_profile_image( $user_id, $size = 80 ) {
         $user = get_userdata( $user_id );
 
         if ( ! $user ) {

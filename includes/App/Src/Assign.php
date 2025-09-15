@@ -146,30 +146,45 @@ class Assign {
          */
         $page    = isset($_GET['page_num']) ? intval($_GET['page_num']) : 1;
         $members = get_data('md_members', $page, 10);
-        $teams   = get_data('md_teams', $page, 10);
+        $page      = isset($_GET['page_num']) ? intval($_GET['page_num']) : 1;
+        $per_page  = 10;
+        $offset    = ($page - 1) * $per_page;
+
+        // Get all members (users with md_meta = 'md')
+        $members_args = [
+            'meta_key'   => 'md_meta',
+            'meta_value' => 'md',
+            'number'     => $per_page,
+            'offset'     => $offset,
+            'orderby'    => 'ID',
+            'order'      => 'ASC',
+            'fields'     => 'all_with_meta',
+        ];
+        $all_members = get_users( $members_args );
+
+        $teams = get_data( 'md_teams' );
+
         ?>
 
         <div class="container-fluid p-4">
           <div class="row">
 
             <!-- Members List -->
-            <div class="col-md-5">
-              <div class="card shadow-sm h-100">
-                <div class="card-header bg-primary text-white">All Members</div>
-                <div class="card-body"  style="max-height: 600px; overflow-y: auto;">
-                  <ul id="members-list" class="list-group">
-                      <?php foreach ($members['data'] as $m): 
-                        $profile_img = !empty($m->profile_image) ? esc_url($m->profile_image) : 'https://via.placeholder.com/40';
-                      ?>
-                        <li class="list-group-item member-item d-flex align-items-center" data-id="<?php echo esc_attr($m->id); ?>">
-                            <img src="<?php echo $profile_img; ?>" alt="Profile" class="rounded-circle me-2" width="30" height="30">
-                            <span class="member-name"><?php echo esc_html($m->first_name . ' ' . $m->last_name); ?></span>
-                        </li>
-                      <?php endforeach; ?>
-                    </ul>
-                </div>
-              </div>
+        <div class="col-md-5">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-primary text-white">All Members</div>
+            <div class="card-body" style="max-height: 600px; overflow-y: auto;">
+              <ul id="members-list" class="list-group">
+                  <?php foreach ($all_members as $m): ?>
+                    <li class="list-group-item member-item d-flex align-items-center" data-id="<?php echo esc_attr($m->ID); ?>">
+                        <img src="<?php echo get_user_profile_image( $m->ID ) ?>" alt="Profile" class="rounded-circle me-2" width="30" height="30">
+                        <span class="member-name"><?php echo get_user_full_name( $m->ID ) ?></span>
+                    </li>
+                  <?php endforeach; ?>
+                </ul>
             </div>
+          </div>
+        </div>
 
             <!-- Teams List -->
             <div class="col-md-7">
@@ -185,23 +200,24 @@ class Assign {
                         <?php
                         $team_members = get_members_by_team($t->id);
                         foreach ($team_members as $tm):
-                          $profile_img = get_member_profile_image_by_id($tm->id);
+                            // echo $tm;
+                        $profile_img = get_user_meta($tm->ID, 'profile_image', true) ?: 'https://via.placeholder.com/40';
                         ?>
                           <li class="list-group-item member-item d-flex align-items-center"
-                              data-id="<?php echo esc_attr($tm->id); ?>">
+                              data-id="<?php echo esc_attr($tm->ID); ?>">
 
                             <!-- Mini Profile Image -->
-                            <img src="<?php echo $profile_img; ?>"
+                            <img src="<?php echo get_user_profile_image( $tm->ID ) ?>"
                                  alt="Profile"
                                  class="rounded-circle me-2"
                                  width="30" height="30">
 
                             <!-- Member Name -->
-                            <span><?php echo esc_html(get_member_full_name($tm->id)); ?></span>
+                            <span><?php echo get_user_full_name( $tm->ID ); ?></span>
 
                             <!-- Remove Button -->
                             <button class="btn btn-sm btn-danger ms-auto md-remove-member"
-                                    data-member-id="<?php echo esc_attr($tm->id); ?>"
+                                    data-member-id="<?php echo esc_attr($tm->ID); ?>"
                                     data-team-id="<?php echo esc_attr($t->id); ?>">×</button>
                           </li>
                         <?php endforeach; ?>
