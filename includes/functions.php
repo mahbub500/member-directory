@@ -198,11 +198,7 @@ if ( ! function_exists( 'get_user_profile_image' ) ) {
      * @return string URL of profile image.
      */
     function get_user_profile_image( $user_id, $size = 80 ) {
-        $user = get_userdata( $user_id );
-
-        if ( ! $user ) {
-            return 'https://via.placeholder.com/' . $size;
-        }
+        $user = get_userdata( $user_id );        
 
         $email = $user->user_email;
 

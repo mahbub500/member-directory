@@ -11,8 +11,9 @@ class Activator {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         $charset_collate = $wpdb->get_charset_collate();
 
-        $table_teams   = $wpdb->prefix . 'md_teams';
-        $table_rel     = $wpdb->prefix . 'md_member_team_relations';
+        $table_teams    = $wpdb->prefix . 'md_teams';
+        $table_rel      = $wpdb->prefix . 'md_member_team_relations';
+        $table_name     = $wpdb->prefix . 'md_team_chat';
 
        // Teams Table
         $sql1 = "CREATE TABLE $table_teams (
@@ -32,9 +33,19 @@ class Activator {
             assigned_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
             FOREIGN KEY (team_id) REFERENCES $table_teams(id) ON DELETE CASCADE
+        ) $charset_collate;";       
+
+        $sql3 = "CREATE TABLE $table_name (
+            id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            team_id BIGINT(20) UNSIGNED NOT NULL,
+            sender_id BIGINT(20) UNSIGNED NOT NULL,
+            message TEXT NOT NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY  (id)
         ) $charset_collate;";
 
         dbDelta($sql1);
         dbDelta($sql2);
+        dbDelta( $sql3 );
     }
 }

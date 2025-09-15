@@ -66,6 +66,12 @@ class Shortcode {
             'order'   => 'ASC'
         ]);
 
+        usort($members, function($a, $b) use ($current_user_id) {
+            if ($a->ID == $current_user_id) return -1; 
+            if ($b->ID == $current_user_id) return 1;  
+            return 0; // Keep others as is
+        });
+
         // 5. Output
         ob_start();
         ?>
@@ -104,10 +110,10 @@ class Shortcode {
                         <div id="chat-messages" class="p-3" style="height:250px; overflow-y:auto; background:#f8f9fa;">
                             <!-- Messages will load here via AJAX -->
                         </div>
-                        <form id="team-chat-form" class="d-flex border-top p-2">
-                            <input type="text" id="chat-message-input" class="form-control me-2" placeholder="<?php esc_attr_e('Type your message…','member-directory'); ?>" required>
-                            <button type="submit" class="btn btn-success"><?php esc_html_e('Send','member-directory'); ?></button>
-                        </form>
+                        <form id="team-chat-form" class="d-flex border-top p-2" data-team-id="<?php echo esc_attr($team_id); ?>">
+                        <input type="text" id="chat-message-input" class="form-control me-2" placeholder="<?php esc_attr_e('Type your message…','member-directory'); ?>" required>
+                        <button type="submit" class="btn btn-success"><?php esc_html_e('Send','member-directory'); ?></button>
+                    </form>
                     </div>
 
                 </div>

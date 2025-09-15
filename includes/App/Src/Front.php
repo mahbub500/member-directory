@@ -13,13 +13,48 @@ class Front {
     public function __construct() {
         $this->action( 'wp_head', [ $this, 'head' ] );
         $this->action( 'template_redirect', [ $this, 'user_profile_template' ] );
+        $this->action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ] );
     }
 
     public function head(){
-        
-        // Utility::pri( $tm->ID );
-        // get_team_members( 4 );
+        // Utility::pri();        
     }
+
+    public function enqueue_assets(){
+        // Plugin Admin JS using constant
+        wp_enqueue_script(
+            'md-front',
+            MD_ASSETS_URL . 'js/front.js', // Use MD_ASSETS_URL
+            ['jquery', 'jquery-ui-draggable', 'jquery-ui-droppable'],
+            time(),
+            true
+        );
+        // CSS
+        wp_enqueue_style(
+            'bootstrap',
+            'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css'
+        );
+
+        // JS
+        wp_enqueue_script(
+            'bootstrap',
+            'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
+            [],
+            null,
+            true
+        );
+
+        // Localize AJAX
+        wp_localize_script(
+            'md-front',
+            'MD_AJAX',
+            [
+                'ajaxurl' => admin_url( 'admin-ajax.php' ),
+                'nonce'   => wp_create_nonce(),
+            ]
+        );
+    }
+
 
     public function user_profile_template(){
          if ( ! is_user_logged_in() ) {

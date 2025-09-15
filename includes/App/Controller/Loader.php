@@ -6,6 +6,7 @@ use MemberDirectory\App\Src\Member;
 use MemberDirectory\App\Src\Team;
 use MemberDirectory\App\Src\Assign;
 use MemberDirectory\App\Src\Shortcode;
+use MemberDirectory\App\Src\Common;
 
 class Loader {
 
@@ -20,5 +21,6 @@ class Loader {
             new Shortcode();
             new Front();
         }
+            new Common();
     }
 }
