@@ -82,7 +82,7 @@ class Shortcode {
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">
-                        <?php echo esc_html__( 'Your Team:', 'member-directory' ) . ' ' . esc_html( $team_name ) .'_'. $team_id; ?>
+                        <?php echo esc_html__( 'Your Team:', 'member-directory' ) . ' ' . esc_html( $team_name ) ; ?>
                     </h4>
                 </div>
                 <div class="card-body">
