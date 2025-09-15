@@ -223,10 +223,6 @@
         formData.append('action', 'md_update_member');
         formData.append('nonce', MD_AJAX.nonce);
 
-        for (let [key, value] of formData.entries()) {
-            console.log(key, value);
-        }
-
         $.ajax({
             url: MD_AJAX.ajaxurl,
             type: 'POST',
@@ -242,8 +238,7 @@
 
                     // Update row data attributes
                     row.data('firstname', member.first_name)
-                       .data('lastname', member.last_name)
-                       .data('email', member.email)
+                       .data('lastname', member.last_name)                       
                        .data('address', member.address)
                        .data('color', member.favorite_color)
                        .data('status', member.status)
@@ -252,7 +247,7 @@
 
                     // Update text fields
                     row.find('td:nth-child(4)').text(member.first_name + ' ' + member.last_name);
-                    row.find('td:nth-child(5)').text(member.email);
+                    
                     row.find('td:nth-child(6)').text(member.address);
                     row.find('td:nth-child(7) span').css('background', member.favorite_color);
                     row.find('td:nth-child(8)').text(member.status);
@@ -431,7 +426,7 @@
             const memberName = $dragged.find('.member-name').text().trim(); // safer if wrapped
             const memberImg  = $dragged.find('img').prop('outerHTML');      // copy <img> tag
             const teamId     = $(this).closest('.team-container').data('team-id');
-            
+
             // Prevent duplicate
             if ($(this).find('li[data-id="' + memberId + '"]').length > 0) {
                 alert('Member already in this team!');

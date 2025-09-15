@@ -325,13 +325,7 @@ class Member {
             'member' => $member_data,
         ]);
     }
-
-
-
-
-
-
-    function delete_member() {
+    public function delete_member() {
         // Check nonce
         if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'] ) ) {
             wp_send_json_error(['message' => 'Invalid nonce']);
@@ -357,50 +351,71 @@ class Member {
 
     public function update_member() {
 
-        if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], ) ) {
-            wp_send_json_error(['message' => 'Invalid nonce']);
+        // Verify nonce
+        if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'] ) ) {
+            wp_send_json_error([ 'data' => 'Invalid nonce' ]);
         }
 
-        global $wpdb;
-        $table = $wpdb->prefix . 'md_members';
+        // Get user ID
+        $user_id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+        if ( ! $user_id || ! get_userdata($user_id) ) {
+            wp_send_json_error([ 'data' => 'User not found' ]);
+        }
 
-        $id = intval($_POST['id']);
+        // Sanitize input
         $data = [
             'first_name'     => sanitize_text_field($_POST['first_name']),
             'last_name'      => sanitize_text_field($_POST['last_name']),
-            'email'          => sanitize_email($_POST['email']),
             'address'        => sanitize_text_field($_POST['address']),
             'favorite_color' => sanitize_text_field($_POST['favorite_color']),
             'status'         => sanitize_text_field($_POST['status']),
         ];
 
-        // ✅ Handle Profile Image
+        // Update WP user
+        wp_update_user([
+            'ID'         => $user_id,
+            'first_name' => $data['first_name'],
+            'last_name'  => $data['last_name'],
+        ]);
+
+        // Handle profile image upload
         if (!empty($_FILES['edit_profile_image']['name'])) {
-            $upload = wp_handle_upload($_FILES['edit_profile_image'], ['test_form' => false]);
-            if (!isset($upload['error'])) {
-                $data['profile_image'] = esc_url($upload['url']);
+            $profile_image = md_handle_image_upload($_FILES['edit_profile_image'], 'profile');
+            if ($profile_image) {
+                update_user_meta($user_id, 'profile_image', esc_url($profile_image));
+                $data['profile_image'] = esc_url($profile_image);
+            } else {
+                $data['profile_image'] = get_user_meta($user_id, 'profile_image', true);
             }
-        }
-
-        // ✅ Handle Cover Image
-        if (!empty($_FILES['edit_cover_image']['name'])) {
-            $upload = wp_handle_upload($_FILES['edit_cover_image'], ['test_form' => false]);
-            if (!isset($upload['error'])) {
-                $data['cover_image'] = esc_url($upload['url']);
-            }
-        }
-
-        $updated = $wpdb->update($table, $data, ['id' => $id]);
-
-        if ($updated !== false) {
-            wp_send_json_success([
-                'message' => 'Member updated successfully',
-                'member'  => array_merge(['id' => $id], $data)
-            ]);
         } else {
-            wp_send_json_error(['message' => 'Failed to update member']);
+            $data['profile_image'] = get_user_meta($user_id, 'profile_image', true);
         }
+
+        // Handle cover image upload
+        if (!empty($_FILES['edit_cover_image']['name'])) {
+            $cover_image = md_handle_image_upload($_FILES['edit_cover_image'], 'cover');
+            if ($cover_image) {
+                update_user_meta($user_id, 'cover_image', esc_url($cover_image));
+                $data['cover_image'] = esc_url($cover_image);
+            } else {
+                $data['cover_image'] = get_user_meta($user_id, 'cover_image', true);
+            }
+        } else {
+            $data['cover_image'] = get_user_meta($user_id, 'cover_image', true);
+        }
+
+        // Update remaining meta
+        update_user_meta($user_id, 'address', $data['address']);
+        update_user_meta($user_id, 'favorite_color', $data['favorite_color']);
+        update_user_meta($user_id, 'status', $data['status']);
+        update_user_meta($user_id, 'md_meta', 'md');
+
+        wp_send_json_success([
+            'message' => 'Member updated successfully',
+            'member'  => array_merge(['id' => $user_id], $data)
+        ]);
     }
+
 
     public function footer(){
         ?>
@@ -495,7 +510,7 @@ class Member {
             </div>
             <div class="col-12">
               <label class="form-label">Email</label>
-              <input type="email" name="email" id="md-edit-email" class="form-control" required>
+              <input readonly type="email" name="email" id="md-edit-email" class="form-control" required>
             </div>
             <div class="col-12">
               <label class="form-label">Address</label>
