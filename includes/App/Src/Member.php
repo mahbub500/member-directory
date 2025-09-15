@@ -63,8 +63,6 @@ class Member {
                         </div>
                         <div class="card-body">
                             <form id="md-add-member-form" class="row g-3" enctype="multipart/form-data">
-                                <?php wp_nonce_field('md_nonce', 'security'); ?>
-
                                 <!-- First Name -->
                                 <div class="col-12">
                                     <label class="form-label"><?php esc_html_e('First Name', 'member-directory'); ?></label>
@@ -161,7 +159,17 @@ class Member {
             $color         = get_user_meta($user->ID, 'favorite_color', true);
             $status        = get_user_meta($user->ID, 'status', true);
         ?>
-        <tr class="md-member-row" data-id="<?php echo esc_attr($user->ID); ?>">
+        <tr class="md-member-row"
+            data-id="<?php echo esc_attr( $user->ID ); ?>"
+            data-firstname="<?php echo esc_attr( get_user_meta( $user->ID, 'first_name', true ) ); ?>"
+            data-lastname="<?php echo esc_attr( get_user_meta( $user->ID, 'last_name', true ) ); ?>"
+            data-email="<?php echo esc_attr( $user->user_email ); ?>"
+            data-address="<?php echo esc_attr( $address ); ?>"
+            data-color="<?php echo esc_attr( $color ); ?>"
+            data-status="<?php echo esc_attr( $status ); ?>"
+            data-profile="<?php echo esc_url( $profile_image ); ?>"
+            data-cover="<?php echo esc_url( $cover_image ); ?>"
+        >
             <td><?php echo esc_html($user->ID); ?></td>
 
             <!-- Profile -->
