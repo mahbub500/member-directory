@@ -306,7 +306,7 @@
                     // Append new team to table dynamically
                     const team = response.data.team;
                     $('#md-teams-list').append(`
-                        <tr>
+                        <tr data-id="${team.id}" data-name="${team.name}" data-description="${team.short_description}">
                             <td>${team.id}</td>
                             <td>${team.name}</td>
                             <td>${team.short_description}</td>
@@ -316,6 +316,7 @@
                             </td>
                         </tr>
                     `);
+
 
                     // Reset form
                     $('#md-add-team-form')[0].reset();
@@ -337,6 +338,8 @@
         $('#md-edit-team-name').val(row.data('name'));
         $('#md-edit-team-description').val(row.data('description'));
         $('#md-edit-team-modal').modal('show');
+
+        console.log( row.data('id') );
     });
 
     // Save Edit
