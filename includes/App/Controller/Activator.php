@@ -21,8 +21,6 @@ class Activator {
             first_name VARCHAR(100) NOT NULL,
             last_name VARCHAR(100) NOT NULL,
             email VARCHAR(150) NOT NULL UNIQUE,
-            profile_image VARCHAR(255) DEFAULT NULL,
-            cover_image VARCHAR(255) DEFAULT NULL,
             address TEXT DEFAULT NULL,
             favorite_color VARCHAR(20) DEFAULT NULL,
             status ENUM('active','draft') DEFAULT 'draft',
@@ -54,56 +52,5 @@ class Activator {
         dbDelta($sql1);
         dbDelta($sql2);
         dbDelta($sql3);
-    }
-}
-
-if ( ! function_exists( 'get_member_name_by_id' ) ) {
-    /**
-     * Get member full name by ID
-     *
-     * @param int $member_id
-     * @return string|null
-     */
-    function get_member_name_by_id( $member_id ) {
-        global $wpdb;
-        $table_members = $wpdb->prefix . 'members';
-
-        $member = $wpdb->get_row(
-            $wpdb->prepare(
-                "SELECT first_name, last_name FROM $table_members WHERE id = %d LIMIT 1",
-                $member_id
-            )
-        );
-
-        if ( $member ) {
-            return trim( $member->first_name . ' ' . $member->last_name );
-        }
-
-        return null;
-    }
-
-   
-
-}
-
-if ( ! function_exists( 'get_member_profile_image_by_id' ) ) {
-     /**
-     * Get member profile image by ID
-     *
-     * @param int $member_id
-     * @return string|null
-     */
-    function get_member_profile_image_by_id( $member_id ) {
-        global $wpdb;
-        $table_members = $wpdb->prefix . 'members';
-
-        $profile_image = $wpdb->get_var(
-            $wpdb->prepare(
-                "SELECT profile_image FROM $table_members WHERE id = %d LIMIT 1",
-                $member_id
-            )
-        );
-
-        return $profile_image ? esc_url( $profile_image ) : null;
     }
 }

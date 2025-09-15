@@ -22,14 +22,32 @@ class Member {
 
     public function members_page() {
         // Pagination setup
-        $page = isset($_GET['page_num']) ? intval($_GET['page_num']) : 1;
+        $page       = isset($_GET['page_num']) ? intval($_GET['page_num']) : 1;
+        $per_page   = 10;
+        $offset     = ($page - 1) * $per_page;
 
-        // Fetch paginated data
-        $result         = get_data('md_members', $page, 10);
-        $members        = $result['data'];
-        $total_pages    = $result['total_pages'];
-        $current_page   = $result['current_page'];
-        $total_members  = $result['total_items'];
+        // Query all users with md_meta = 'md'
+        $args = [
+            'meta_key'       => 'md_meta',
+            'meta_value'     => 'md',
+            'number'         => $per_page,
+            'offset'         => $offset,
+            'orderby'        => 'ID',
+            'order'          => 'ASC',
+            'fields'         => 'all_with_meta',
+        ];
+
+        $all_users = get_users( $args );
+
+        // Total users for pagination
+        $total_members = count( get_users([
+            'meta_key'   => 'md_meta',
+            'meta_value' => 'md',
+            'fields'     => 'ID',
+        ]) );
+
+        $total_pages = ceil($total_members / $per_page);
+        $current_page = $page;
         ?>
 
         <div class="container-fluid p-4" id="md-all-members">
@@ -120,87 +138,76 @@ class Member {
                             <?php esc_html_e('All Members', 'member-directory'); ?>
                         </div>
                         <div class="card-body table-responsive">
-                            <table class="table table-striped table-hover align-middle md-members-table">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th><?php esc_html_e('ID', 'member-directory'); ?></th>
-                                        <th><?php esc_html_e('Profile', 'member-directory'); ?></th>
-                                        <th><?php esc_html_e('Cover', 'member-directory'); ?></th>
-                                        <th><?php esc_html_e('Name', 'member-directory'); ?></th>
-                                        <th><?php esc_html_e('Email', 'member-directory'); ?></th>
-                                        <th><?php esc_html_e('Address', 'member-directory'); ?></th>
-                                        <th><?php esc_html_e('Color', 'member-directory'); ?></th>
-                                        <th><?php esc_html_e('Status', 'member-directory'); ?></th>
-                                        <th><?php esc_html_e('Actions', 'member-directory'); ?></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="md-members-list">
-                                    <?php foreach ($members as $m): ?>
-                                        <tr class="md-member-row"
-                                            data-id="<?php echo esc_attr($m->id); ?>"
-                                            data-firstname="<?php echo esc_attr($m->first_name); ?>"
-                                            data-lastname="<?php echo esc_attr($m->last_name); ?>"
-                                            data-email="<?php echo esc_attr($m->email); ?>"
-                                            data-address="<?php echo esc_attr($m->address); ?>"
-                                            data-color="<?php echo esc_attr($m->favorite_color); ?>"
-                                            data-status="<?php echo esc_attr($m->status); ?>"
-                                            data-profile="<?php echo esc_url($m->profile_image); ?>"
-                                            data-cover="<?php echo esc_url($m->cover_image); ?>"
-                                        >
-                                            <td><?php echo esc_html($m->id); ?></td>
+                           
+<table class="table table-striped table-hover align-middle members-table">
+    <thead class="table-dark">
+        <tr>
+            <th><?php esc_html_e('ID', 'member-directory'); ?></th>
+            <th><?php esc_html_e('Profile', 'member-directory'); ?></th>
+            <th><?php esc_html_e('Cover', 'member-directory'); ?></th>
+            <th><?php esc_html_e('Name', 'member-directory'); ?></th>
+            <th><?php esc_html_e('Email', 'member-directory'); ?></th>
+            <th><?php esc_html_e('Address', 'member-directory'); ?></th>
+            <th><?php esc_html_e('Color', 'member-directory'); ?></th>
+            <th><?php esc_html_e('Status', 'member-directory'); ?></th>
+            <th><?php esc_html_e('Actions', 'member-directory'); ?></th>
+        </tr>
+    </thead>
+    <tbody id="md-members-list">
+        <?php foreach ($all_users as $user): 
+            $profile_image = get_user_meta($user->ID, 'profile_image', true) ?: 'https://via.placeholder.com/40';
+            $cover_image   = get_user_meta($user->ID, 'cover_image', true) ?: 'https://via.placeholder.com/60x40';
+            $address       = get_user_meta($user->ID, 'address', true);
+            $color         = get_user_meta($user->ID, 'favorite_color', true);
+            $status        = get_user_meta($user->ID, 'status', true);
+        ?>
+        <tr class="md-member-row" data-id="<?php echo esc_attr($user->ID); ?>">
+            <td><?php echo esc_html($user->ID); ?></td>
 
-                                            <!-- Profile -->
-                                            <td>
-                                                <?php if (!empty($m->profile_image)): ?>
-                                                    <img src="<?php echo esc_url($m->profile_image); ?>" 
-                                                         alt="Profile" 
-                                                         style="width:40px;height:40px;border-radius:50%;cursor:pointer;">
-                                                <?php else: ?>
-                                                    <span class="text-muted">N/A</span>
-                                                <?php endif; ?>
-                                            </td>
+            <!-- Profile -->
+            <td>
+                <img src="<?php echo esc_url($profile_image); ?>" 
+                     alt="Profile" 
+                     style="width:40px;height:40px;border-radius:50%;cursor:pointer;">
+            </td>
 
-                                            <!-- Cover -->
-                                            <td>
-                                                <?php if (!empty($m->cover_image)): ?>
-                                                    <img src="<?php echo esc_url($m->cover_image); ?>" 
-                                                         alt="Cover" 
-                                                         style="width:60px;height:40px;object-fit:cover;border-radius:4px;cursor:pointer;">
-                                                <?php else: ?>
-                                                    <span class="text-muted">N/A</span>
-                                                <?php endif; ?>
-                                            </td>
+            <!-- Cover -->
+            <td>
+                <img src="<?php echo esc_url($cover_image); ?>" 
+                     alt="Cover" 
+                     style="width:60px;height:40px;object-fit:cover;border-radius:4px;cursor:pointer;">
+            </td>
 
-                                            <!-- Name & Email -->
-                                            <td><?php echo esc_html($m->first_name . ' ' . $m->last_name); ?></td>
-                                            <td><?php echo esc_html($m->email); ?></td>
-                                            <td><?php echo esc_html($m->address ?? ''); ?></td>
+            <!-- Name & Email -->
+            <td><?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></td>
+            <td><?php echo esc_html($user->user_email); ?></td>
+            <td><?php echo esc_html($address ?? ''); ?></td>
 
-                                            <!-- Color -->
-                                            <td>
-                                                <span style="background:<?php echo esc_attr($m->favorite_color); ?>;
-                                                             padding:5px 15px;display:inline-block;border-radius:4px;">
-                                                </span>
-                                            </td>
+            <!-- Color -->
+            <td>
+                <span style="background:<?php echo esc_attr($color); ?>;
+                             padding:5px 15px;display:inline-block;border-radius:4px;">
+                </span>
+            </td>
 
-                                            <!-- Status -->
-                                            <td><?php echo esc_html($m->status); ?></td>
+            <!-- Status -->
+            <td><?php echo esc_html($status); ?></td>
 
-                                            <!-- Actions -->
-                                            <td>
-                                                <button class="btn btn-sm btn-primary md-edit-member" 
-                                                        data-id="<?php echo esc_attr($m->id); ?>">
-                                                    <?php esc_html_e('Edit', 'member-directory'); ?>
-                                                </button>
-                                                <button class="btn btn-sm btn-danger md-delete-member" 
-                                                        data-id="<?php echo esc_attr($m->id); ?>">
-                                                    <?php esc_html_e('Delete', 'member-directory'); ?>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
+            <!-- Actions -->
+            <td>
+                <button class="btn btn-sm btn-primary edit-member" 
+                        data-id="<?php echo esc_attr($user->ID); ?>">
+                    <?php esc_html_e('Edit', 'member-directory'); ?>
+                </button>
+                <button class="btn btn-sm btn-danger delete-member" 
+                        data-id="<?php echo esc_attr($user->ID); ?>">
+                    <?php esc_html_e('Delete', 'member-directory'); ?>
+                </button>
+            </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
 
                             <!-- Pagination -->
                             <?php if ($total_pages > 1): ?>
@@ -228,76 +235,91 @@ class Member {
 }
 
     /**
-     * Add a new member and create a corresponding WordPress user
+     * Add a new member as a WordPress user with all meta data (no custom table)
      */
     public function add_member() {
 
         // Verify nonce
         if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'] ) ) {
-            wp_send_json_error(
-                [
-                    'data' => 'Invalid nonce',
-                ]
-            );
+            wp_send_json_error([
+                'data' => 'Invalid nonce',
+            ]);
         }
 
-        global $wpdb;
-
-        $table = $wpdb->prefix . 'md_members';
+        // Sanitize input
+        $first_name     = sanitize_text_field( $_POST['first_name'] );
+        $last_name      = sanitize_text_field( $_POST['last_name'] );
+        $email          = sanitize_email( $_POST['email'] );
+        $address        = sanitize_text_field( $_POST['address'] );
+        $favorite_color = sanitize_text_field( $_POST['favorite_color'] );
+        $status         = sanitize_text_field( $_POST['status'] );
 
         // Handle file uploads
         $profile_image = md_handle_image_upload( $_FILES['profile_image'], 'profile' );
         $cover_image   = md_handle_image_upload( $_FILES['cover_image'], 'cover' );
 
-        // Insert member into custom table
-        $wpdb->insert(
-            $table,
-            [
-                'first_name'     => sanitize_text_field( $_POST['first_name'] ),
-                'last_name'      => sanitize_text_field( $_POST['last_name'] ),
-                'email'          => sanitize_email( $_POST['email'] ),
-                'address'        => sanitize_text_field( $_POST['address'] ),
-                'profile_image'  => $profile_image,
-                'cover_image'    => $cover_image,
-                'favorite_color' => sanitize_text_field( $_POST['favorite_color'] ),
-                'status'         => sanitize_text_field( $_POST['status'] ),
-                'created_at'     => current_time( 'mysql' ),
-            ]
-        );
-
-        $member_id = $wpdb->insert_id;
-
-        // Create a WordPress user
-        $user_email = sanitize_email( $_POST['email'] );
-        $user_login = sanitize_user( $_POST['first_name'] . '_' . $member_id );
-        $password   = '12345';
-
-        if ( ! email_exists( $user_email ) ) {
-            $user_id = wp_create_user( $user_login, $password, $user_email );
-
-            if ( ! is_wp_error( $user_id ) ) {
-                wp_update_user(
-                    [
-                        'ID'         => $user_id,
-                        'first_name' => sanitize_text_field( $_POST['first_name'] ),
-                        'last_name'  => sanitize_text_field( $_POST['last_name'] ),
-                        'role'       => 'subscriber',
-                    ]
-                );
-            }
+        // Check if email already exists
+        if ( email_exists( $email ) ) {
+            wp_send_json_error([
+                'data' => 'A user with this email already exists.',
+            ]);
         }
 
-        // Get full member data
-        $member = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", $member_id ) );
+        // Generate username and password
+        $user_login = sanitize_user( $first_name . '_' . wp_generate_password( 4, false ) );
+        $password   = '12345';
 
-        // Return response
-        wp_send_json_success(
-            [
-                'data'   => 'Member added successfully.',
-                'member' => $member,
-            ]
-        );
+        // Create WordPress user
+        $user_id = wp_create_user( $user_login, $password, $email );
+
+        if ( is_wp_error( $user_id ) ) {
+            wp_send_json_error([
+                'data' => $user_id->get_error_message(),
+            ]);
+        }
+
+        // Update user meta and basic info
+        wp_update_user([
+            'ID'         => $user_id,
+            'first_name' => $first_name,
+            'last_name'  => $last_name,
+            'role'       => 'subscriber',
+        ]);
+
+        // Store all additional meta
+        update_user_meta( $user_id, 'address', $address );
+        update_user_meta( $user_id, 'favorite_color', $favorite_color );
+        update_user_meta( $user_id, 'status', $status );
+        update_user_meta( $user_id, 'md_meta', 'md' ); // for filtering
+        if ( $profile_image ) {
+            update_user_meta( $user_id, 'profile_image', esc_url( $profile_image ) );
+        }
+        if ( $cover_image ) {
+            update_user_meta( $user_id, 'cover_image', esc_url( $cover_image ) );
+        }
+
+        // Prepare member data to match JS expectations
+        $member_data = [
+            'id'             => $user_id,
+            'first_name'     => $first_name,
+            'last_name'      => $last_name,
+            'email'          => $email,
+            'address'        => $address,
+            'favorite_color' => $favorite_color,
+            'status'         => $status,
+            'profile_image'  => $profile_image ? esc_url( $profile_image ) : '',
+            'cover_image'    => $cover_image ? esc_url( $cover_image ) : '',
+        ];
+
+        // Return success response compatible with your JS
+        wp_send_json_success([
+            'data'   => 'Member added successfully.',
+            'member' => $member_data,
+        ]);
     }
+
+
+
 
 
 

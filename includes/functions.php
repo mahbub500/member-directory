@@ -188,18 +188,43 @@ if ( ! function_exists( 'get_all_ids' ) ) {
     }
 }
 
-if ( ! function_exists( 'get_member_profile_image_by_id' ) ) {
+if ( ! function_exists( 'md_get_user_profile_image' ) ) {
     /**
-     * Get member profile image by ID
+     * Get user profile image
+     *
+     * @param int $user_id WordPress user ID.
+     * @param int $size Image size in pixels (default 80).
+     * @return string URL of profile image.
      */
-    function get_member_profile_image_by_id( $member_id ) {
-        global $wpdb;
-        $table = $wpdb->prefix . 'md_members';
+    function md_get_user_profile_image( $user_id, $size = 80 ) {
+        $user = get_userdata( $user_id );
 
-        $profile_image = $wpdb->get_var(
-            $wpdb->prepare("SELECT profile_image FROM $table WHERE id = %d", $member_id)
-        );
+        if ( ! $user ) {
+            return 'https://via.placeholder.com/' . $size;
+        }
 
-        return $profile_image ? esc_url($profile_image) : 'https://via.placeholder.com/40';
+        $email = $user->user_email;
+
+        // Check Gravatar
+        $hash = md5( strtolower( trim( $email ) ) );
+        $gravatar_url = "https://www.gravatar.com/avatar/$hash?s=$size&d=404";
+
+        // Try to fetch Gravatar
+        $response = wp_remote_head( $gravatar_url );
+
+        if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
+            return $gravatar_url;
+        }
+
+        // Fallback to local profile image
+        $local_image = get_user_meta( $user_id, 'md_profile_image', true );
+
+        if ( $local_image ) {
+            return esc_url( $local_image );
+        }
+
+        // Final fallback
+        return 'https://via.placeholder.com/' . $size;
     }
 }
+
