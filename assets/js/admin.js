@@ -419,27 +419,36 @@
         cursor: 'move'
     });
 
-    // Make team member lists droppable
-     // Make team lists droppable
+    // Make team lists droppable
     $('.team-members').droppable({
         accept: '.member-item',
         hoverClass: 'bg-light',
         drop: function(event, ui) {
-            const memberId = $(ui.draggable).data('id');
-            const memberName = $(ui.draggable).text().trim();
-            const teamId = $(this).closest('.team-container').data('team-id');
+            const $dragged = $(ui.draggable);
 
+            // Grab member details
+            const memberId   = $dragged.data('id');
+            const memberName = $dragged.find('.member-name').text().trim(); // safer if wrapped
+            const memberImg  = $dragged.find('img').prop('outerHTML');      // copy <img> tag
+            const teamId     = $(this).closest('.team-container').data('team-id');
+            
             // Prevent duplicate
             if ($(this).find('li[data-id="' + memberId + '"]').length > 0) {
                 alert('Member already in this team!');
                 return;
             }
 
-            // Append a **copied** member
-            const li = $('<li class="list-group-item member-item" data-id="' + memberId + '">' +
-                         memberName +
-                         '<button class="btn btn-sm btn-danger float-end md-remove-member" data-member-id="' + memberId + '" data-team-id="' + teamId + '">×</button>' +
-                         '</li>');
+            // Append a **copied** member with image + name
+            const li = $(`
+                <li class="list-group-item member-item d-flex align-items-center" data-id="${memberId}">
+                    ${memberImg}
+                    <span class="ms-2">${memberName}</span>
+                    <button class="btn btn-sm btn-danger ms-auto md-remove-member" 
+                            data-member-id="${memberId}" 
+                            data-team-id="${teamId}">×</button>
+                </li>
+            `);
+
             $(this).append(li);
 
             // AJAX: assign member
@@ -456,6 +465,7 @@
             });
         }
     });
+
     
 
 

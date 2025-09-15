@@ -158,22 +158,15 @@ class Assign {
                 <div class="card-header bg-primary text-white">All Members</div>
                 <div class="card-body"  style="max-height: 600px; overflow-y: auto;">
                   <ul id="members-list" class="list-group">
-                    <?php foreach ($members['data'] as $m): ?>
-                      <?php $profile_img = get_member_profile_image_by_id($m->id); ?>
-                      <li class="list-group-item member-item d-flex align-items-center"
-                          data-id="<?php echo esc_attr($m->id); ?>">
-
-                        <!-- Mini Profile Image -->
-                        <img src="<?php echo $profile_img; ?>"
-                             alt="Profile"
-                             class="rounded-circle me-2"
-                             width="30" height="30">
-
-                        <!-- Member Name -->
-                        <span><?php echo esc_html(get_member_full_name($m->id)); ?></span>
-                      </li>
-                    <?php endforeach; ?>
-                  </ul>
+                      <?php foreach ($members['data'] as $m): 
+                        $profile_img = !empty($m->profile_image) ? esc_url($m->profile_image) : 'https://via.placeholder.com/40';
+                      ?>
+                        <li class="list-group-item member-item d-flex align-items-center" data-id="<?php echo esc_attr($m->id); ?>">
+                            <img src="<?php echo $profile_img; ?>" alt="Profile" class="rounded-circle me-2" width="30" height="30">
+                            <span class="member-name"><?php echo esc_html($m->first_name . ' ' . $m->last_name); ?></span>
+                        </li>
+                      <?php endforeach; ?>
+                    </ul>
                 </div>
               </div>
             </div>
