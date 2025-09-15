@@ -15,14 +15,8 @@ class Front {
     }
 
     public function head(){
-        $members = get_members_by_team(9);
-
-
-
-        foreach( $members as $tm ){
-
-            Utility::pri( $tm->ID );
-        }
+        
+        // Utility::pri( $tm->ID );
         // get_team_members( 4 );
     }
 }

@@ -247,7 +247,6 @@
 
                     // Update text fields
                     row.find('td:nth-child(4)').text(member.first_name + ' ' + member.last_name);
-                    
                     row.find('td:nth-child(6)').text(member.address);
                     row.find('td:nth-child(7) span').css('background', member.favorite_color);
                     row.find('td:nth-child(8)').text(member.status);
@@ -288,12 +287,7 @@
         const formData = new FormData(this); // automatically includes 'name' and 'short_description'
         formData.append('action', 'md_add_team');
         formData.append('nonce', MD_AJAX.nonce);
-
-        // Debug: check formData
-        for (let [key, value] of formData.entries()) {
-            console.log(key, value);
-        }
-
+        
         // Optional loader
         md_modal(true);
 
@@ -316,6 +310,10 @@
                             <td>${team.id}</td>
                             <td>${team.name}</td>
                             <td>${team.short_description}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary md-edit-team" data-id="${team.id}">Edit</button>
+                                <button class="btn btn-sm btn-danger md-delete-team" data-id="${team.id}">Delete</button>
+                            </td>
                         </tr>
                     `);
 
