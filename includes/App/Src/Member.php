@@ -336,23 +336,22 @@ class Member {
         if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'] ) ) {
             wp_send_json_error(['message' => 'Invalid nonce']);
             return;
+        }        
+
+        // Get user ID and sanitize
+        $user_id = isset( $_POST['member_id'] ) ? intval( $_POST['member_id'] ) : 0;
+
+        if ( ! $user_id || ! get_userdata( $user_id ) ) {
+            wp_send_json_error( ['data' => 'User not found'] );
         }
 
-        if ( empty($_POST['member_id']) ) {
-            wp_send_json_error(['message' => 'Member ID is required']);
-            return;
-        }
+        // Delete the user
+        $result = wp_delete_user( $user_id );
 
-        global $wpdb;
-        $table = $wpdb->prefix . 'md_members';
-        $id    = intval($_POST['member_id']);
-
-        $deleted = $wpdb->delete($table, ['id' => $id]);
-
-        if ( $deleted ) {
-            wp_send_json_success(['message' => 'Member deleted successfully']);
+        if ( $result ) {
+            wp_send_json_success( ['data' => 'User deleted successfully'] );
         } else {
-            wp_send_json_error(['message' => 'Failed to delete member']);
+            wp_send_json_error( ['data' => 'Failed to delete user'] );
         }
     }
 
