@@ -140,25 +140,37 @@ class Assign {
 
 
 
-    public function assign_page(){
-        $page       = isset($_GET['page_num']) ? intval($_GET['page_num']) : 1;
-        $members    = get_data('md_members', $page, 10);
-        $teams      = get_data('md_teams', $page, 10);
+    public function assign_page () {
+        /**
+         * Pagination data loading (already in your code)
+         */
+        $page    = isset($_GET['page_num']) ? intval($_GET['page_num']) : 1;
+        $members = get_data('md_members', $page, 10);
+        $teams   = get_data('md_teams', $page, 10);
         ?>
-        <div class="container-fluid p-4">
 
+        <div class="container-fluid p-4">
           <div class="row">
 
             <!-- Members List -->
             <div class="col-md-5">
               <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white">All Members</div>
-                <div class="card-body">
+                <div class="card-body"  style="max-height: 600px; overflow-y: auto;">
                   <ul id="members-list" class="list-group">
                     <?php foreach ($members['data'] as $m): ?>
-                      <li class="list-group-item member-item" 
+                      <?php $profile_img = get_member_profile_image_by_id($m->id); ?>
+                      <li class="list-group-item member-item d-flex align-items-center"
                           data-id="<?php echo esc_attr($m->id); ?>">
-                        <?php echo esc_html($m->first_name . ' ' . $m->last_name); ?>
+
+                        <!-- Mini Profile Image -->
+                        <img src="<?php echo $profile_img; ?>"
+                             alt="Profile"
+                             class="rounded-circle me-2"
+                             width="30" height="30">
+
+                        <!-- Member Name -->
+                        <span><?php echo esc_html(get_member_full_name($m->id)); ?></span>
                       </li>
                     <?php endforeach; ?>
                   </ul>
@@ -170,7 +182,7 @@ class Assign {
             <div class="col-md-7">
               <div class="card shadow-sm h-100">
                 <div class="card-header bg-success text-white">Teams</div>
-                <div class="card-body" style="max-height: 600px; overflow-y: auto;"> <!-- Scrollable container -->
+                <div class="card-body" style="max-height: 600px; overflow-y: auto;">
                   <?php foreach ($teams['data'] as $t): ?>
                     <div class="team-container mb-3 p-2 border rounded" data-team-id="<?php echo esc_attr($t->id); ?>">
                       <h5><?php echo esc_html($t->name); ?></h5>
@@ -178,11 +190,26 @@ class Assign {
                       <!-- Team Members -->
                       <ul class="team-members list-group mb-2" style="max-height: 200px; overflow-y: auto;">
                         <?php
-                        $team_members = get_members_by_team($t->id);  
-                        foreach ($team_members as $tm): ?>
-                          <li class="list-group-item member-item" data-id="<?php echo esc_attr($tm->id); ?>">
-                            <?php echo esc_html($tm->first_name . ' ' . $tm->last_name); ?>
-                            <button class="btn btn-sm btn-danger float-end md-remove-member" data-member-id="<?php echo esc_attr($tm->id); ?>" data-team-id="<?php echo esc_attr($t->id); ?>">×</button>
+                        $team_members = get_members_by_team($t->id);
+                        foreach ($team_members as $tm):
+                          $profile_img = get_member_profile_image_by_id($tm->id);
+                        ?>
+                          <li class="list-group-item member-item d-flex align-items-center"
+                              data-id="<?php echo esc_attr($tm->id); ?>">
+
+                            <!-- Mini Profile Image -->
+                            <img src="<?php echo $profile_img; ?>"
+                                 alt="Profile"
+                                 class="rounded-circle me-2"
+                                 width="30" height="30">
+
+                            <!-- Member Name -->
+                            <span><?php echo esc_html(get_member_full_name($tm->id)); ?></span>
+
+                            <!-- Remove Button -->
+                            <button class="btn btn-sm btn-danger ms-auto md-remove-member"
+                                    data-member-id="<?php echo esc_attr($tm->id); ?>"
+                                    data-team-id="<?php echo esc_attr($t->id); ?>">×</button>
                           </li>
                         <?php endforeach; ?>
                         <li class="team-members-li"></li>
@@ -195,12 +222,8 @@ class Assign {
               </div>
             </div>
 
-
-          </div> <!-- .row -->
-
-        </div> <!-- .container-fluid -->
-
-
-        <?php 
+          </div>
+        </div>
+        <?php
     }
 }

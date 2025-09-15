@@ -111,15 +111,17 @@ if ( ! function_exists( 'get_data' ) ) {
             'current_page' => $page,
             'per_page'     => $per_page,
         ];
-    }
+    }    
+}
 
+if ( ! function_exists( 'get_members_by_team' ) ) {
     /**
      * Get all members for a specific team.
      *
      * @param int $team_id The team ID.
      * @return array List of member objects
      */
-    function get_members_by_team($team_id) {
+    function get_members_by_team( $team_id ) {
         global $wpdb;
 
         $rel_table = $wpdb->prefix . 'md_member_team_relations';
@@ -144,5 +146,60 @@ if ( ! function_exists( 'get_data' ) ) {
         );
 
         return $wpdb->get_results($query);
+    }
+}
+
+if ( ! function_exists( 'get_member_full_name' ) ) {
+    /**
+     * Get member full name by ID
+     */
+    function get_member_full_name( $member_id ) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'md_members';
+
+        $member = $wpdb->get_row(
+            $wpdb->prepare("SELECT first_name, last_name FROM $table WHERE id = %d", $member_id)
+        );
+
+        return $member ? trim($member->first_name . ' ' . $member->last_name) : null;
+    }
+
+}
+
+if ( ! function_exists( 'get_all_ids' ) ) {
+    /**
+     * Get all IDs from members or teams
+     *
+     * @param string $type 'member' or 'team'
+     * @return array List of IDs
+     */
+    function get_all_ids( $type = 'member' ) {
+        global $wpdb;
+
+        if ( $type === 'team' ) {
+            $table = $wpdb->prefix . 'teams';
+        } else {
+            $table = $wpdb->prefix . 'members';
+        }
+
+        $ids = $wpdb->get_col( "SELECT id FROM $table ORDER BY id ASC" );
+
+        return $ids ? array_map( 'intval', $ids ) : [];
+    }
+}
+
+if ( ! function_exists( 'get_member_profile_image_by_id' ) ) {
+    /**
+     * Get member profile image by ID
+     */
+    function get_member_profile_image_by_id( $member_id ) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'md_members';
+
+        $profile_image = $wpdb->get_var(
+            $wpdb->prepare("SELECT profile_image FROM $table WHERE id = %d", $member_id)
+        );
+
+        return $profile_image ? esc_url($profile_image) : 'https://via.placeholder.com/40';
     }
 }
