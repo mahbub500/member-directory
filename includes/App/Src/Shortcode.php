@@ -65,12 +65,7 @@ class Shortcode {
             'orderby' => 'display_name',
             'order'   => 'ASC'
         ]);
-
-        usort($members, function($a, $b) use ($current_user_id) {
-            if ($a->ID == $current_user_id) return -1; 
-            if ($b->ID == $current_user_id) return 1;  
-            return 0; // Keep others as is
-        });
+        
 
         // 5. Output
         ob_start();
@@ -78,7 +73,7 @@ class Shortcode {
         <div class="my-team-dashboard container my-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0"><?php echo esc_html__( 'Your Team:', 'member-directory' ) . ' ' . esc_html( $team_name ); ?></h4>
+                    <h4 class="mb-0"><?php echo esc_html__( 'Your Team:', 'member-directory' ) . ' ' . esc_html( $team_name ) .'_'. $team_id; ?></h4>
                 </div>
                 <div class="card-body">
                     
