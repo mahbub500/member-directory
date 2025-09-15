@@ -195,11 +195,11 @@ class Member {
 
             <!-- Actions -->
             <td>
-                <button class="btn btn-sm btn-primary edit-member" 
+                <button class="btn btn-sm btn-primary md-edit-member" 
                         data-id="<?php echo esc_attr($user->ID); ?>">
                     <?php esc_html_e('Edit', 'member-directory'); ?>
                 </button>
-                <button class="btn btn-sm btn-danger delete-member" 
+                <button class="btn btn-sm btn-danger md-delete-member" 
                         data-id="<?php echo esc_attr($user->ID); ?>">
                     <?php esc_html_e('Delete', 'member-directory'); ?>
                 </button>
