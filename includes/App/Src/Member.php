@@ -170,45 +170,45 @@ class Member {
             data-profile="<?php echo esc_url( $profile_image ); ?>"
             data-cover="<?php echo esc_url( $cover_image ); ?>"
         >
-            <td><?php echo esc_html($user->ID); ?></td>
+            <td><?php echo esc_html( $user->ID ); ?></td>
 
             <!-- Profile -->
             <td>
-                <img src="<?php echo esc_url($profile_image); ?>" 
+                <img src="<?php echo esc_url( $profile_image ); ?>" 
                      alt="Profile" 
                      style="width:40px;height:40px;border-radius:50%;cursor:pointer;">
             </td>
 
             <!-- Cover -->
             <td>
-                <img src="<?php echo esc_url($cover_image); ?>" 
+                <img src="<?php echo esc_url( $cover_image ); ?>" 
                      alt="Cover" 
                      style="width:60px;height:40px;object-fit:cover;border-radius:4px;cursor:pointer;">
             </td>
 
             <!-- Name & Email -->
-            <td><?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></td>
-            <td><?php echo esc_html($user->user_email); ?></td>
-            <td><?php echo esc_html($address ?? ''); ?></td>
+            <td><?php echo esc_html( $user->first_name . ' ' . $user->last_name ); ?></td>
+            <td><?php echo esc_html( $user->user_email ); ?></td>
+            <td><?php echo esc_html( $address ?? '' ); ?></td>
 
             <!-- Color -->
             <td>
-                <span style="background:<?php echo esc_attr($color); ?>;
+                <span style="background:<?php echo esc_attr( $color ); ?>;
                              padding:5px 15px;display:inline-block;border-radius:4px;">
                 </span>
             </td>
 
             <!-- Status -->
-            <td><?php echo esc_html($status); ?></td>
+            <td><?php echo esc_html( $status ); ?></td>
 
             <!-- Actions -->
             <td>
                 <button class="btn btn-sm btn-primary md-edit-member" 
-                        data-id="<?php echo esc_attr($user->ID); ?>">
+                        data-id="<?php echo esc_attr( $user->ID ); ?>">
                     <?php esc_html_e('Edit', 'member-directory'); ?>
                 </button>
                 <button class="btn btn-sm btn-danger md-delete-member" 
-                        data-id="<?php echo esc_attr($user->ID); ?>">
+                        data-id="<?php echo esc_attr( $user->ID ); ?>">
                     <?php esc_html_e('Delete', 'member-directory'); ?>
                 </button>
             </td>
