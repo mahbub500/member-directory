@@ -101,3 +101,15 @@
 .team-members-li{
     height: 10px;
 }
+#team-list .team-item:hover {
+    cursor: pointer;
+    background-color: #f0f0f0; /* Optional: highlight on hover */
+}
+
+/* Make chat box scrollable */
+#chat-box {
+    max-height: 500px;  /* adjust height as needed */
+    overflow-y: auto;
+    padding-right: 10px;
+}
+</

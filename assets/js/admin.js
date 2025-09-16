@@ -495,6 +495,19 @@ jQuery(document).on('click', '.md-remove-member', function() {
     });
 });
 
+jQuery(document).ready(function($) {
+    $('.team-item').on('click', function(){
+        var teamId = $(this).data('team-id');
+
+        // Hide all chat divs
+        $('.team-chat').hide();
+
+        // Show the selected team chat
+        $('.team-chat[data-team-id="' + teamId + '"]').show();
+    });
+});
+
+
 
 
 

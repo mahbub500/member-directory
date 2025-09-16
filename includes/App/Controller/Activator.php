@@ -35,7 +35,7 @@ class Activator {
             FOREIGN KEY (team_id) REFERENCES $table_teams(id) ON DELETE CASCADE
         ) $charset_collate;";       
 
-        $sql3 = "CREATE TABLE $table_name (
+        $sql3 = "CREATE TABLE $md_team_chat (
             id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             team_id BIGINT(20) UNSIGNED NOT NULL,
             sender_id BIGINT(20) UNSIGNED NOT NULL,
