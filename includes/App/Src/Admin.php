@@ -77,8 +77,9 @@ class Admin {
 
     public function register_menus() {
         $member = new Member();
-        $team = new Team();
+        $team   = new Team();
         $assign = new Assign();
+        $chatlist = new Chatlist();
         add_menu_page(
             __( 'Member Directory', 'member-directory' ),
             __( 'Member Directory', 'member-directory' ),
@@ -114,6 +115,15 @@ class Admin {
             'manage_options',
             'assign',
             [ $assign, 'assign_page' ]
+        );
+
+        add_submenu_page(
+            'members',
+            __( 'Chat List', 'member-directory' ),
+            __( 'Chat List', 'member-directory' ),
+            'manage_options',
+            'chatlist',
+            [ $chatlist, 'chatlist' ]
         );
     }
 
