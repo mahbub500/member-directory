@@ -59,10 +59,17 @@ class Shortcode {
         $members = [];
         if ( ! empty( $member_ids ) ) {
             $members = get_users([
-                'include' => $member_ids,
-                'orderby' => 'display_name',
-                'order'   => 'ASC'
+                'include'    => $member_ids, 
+                'orderby'    => 'display_name',
+                'order'      => 'ASC',
+                'meta_query' => [
+                    [
+                        'key'   => 'status',
+                        'value' => 'active',
+                    ],
+                ],
             ]);
+
         }
 
         // 5. Query all users with md_meta = 'md'
