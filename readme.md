@@ -78,5 +78,6 @@ This plugin was built as an assignment project to demonstrate **WordPress plugin
 - View submissions directly from each Member’s edit screen.
 ---
 
-Visitor of this git ripo. 
+## 👀 Visitors of this repo  
 ![Visitors](https://visitor-badge.laobi.icu/badge?page_id=mahbub500.member-directory)
+
