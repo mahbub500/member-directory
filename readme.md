@@ -9,7 +9,7 @@ This plugin was built as an assignment project to demonstrate **WordPress plugin
 
 1. Clone the repository:
    ```bash
-   git clone https://mahbub500/yourusername/member-directory.git
+   git clone https://github.com/mahbub500/member-directory.git
    cd cloud-server-managment
    ```
 
@@ -77,3 +77,6 @@ This plugin was built as an assignment project to demonstrate **WordPress plugin
 - Manage Members and Teams from the WordPress dashboard.
 - View submissions directly from each Member’s edit screen.
 ---
+
+Visitor of this git ripo. 
+![Visitors](https://visitor-badge.laobi.icu/badge?page_id=mahbub500.member-directory)
